@@ -136,12 +136,89 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
 
 // Return currently logged-in User their most compatible partner from other users in DB (recommend 1 partner at a time or all at once in an array, ordered by weighting?)
 
-// Currently logged-in User liked someone (can safely assume partners are recommended for each other)
-// if other person LIKES the logged-in User
-// remove both unidirectional LIKES relationships
-// set (create) bidirectional MATCH relationship
-// if other person DISLIKES
+// User A LIKES User B
 
-// Currently logged-in User disliked someone, remove RECOMMENDED_FOR relationship
+apiController.createLikesOrMatch = async (req, res, next) => {
+  try {
+    const driver = neo4j.driver(
+      process.env.NEO4J_URI,
+      neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
+    );
+    const serverInfo = await driver.getServerInfo();
+    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+
+    // Use the driver to run queries
+    const { emailA, emailB } = req.params;
+
+    // check status of B towards A
+    const BtoARelationship = await driver.executeQuery(
+      'MATCH (a:User WHERE a.email=$emailA)<-[r:]-(b:User WHERE b.email=$emailB) RETURN r',
+      {
+        emailA,
+        emailB,
+      },
+      { database: 'neo4j' }
+    );
+    console.log('BtoARelationship', BtoARelationship);
+    // if B LIKES A
+    // remove B to A LIKES relationship
+    // remove A to B RECOMMENDED_FOR relationship
+    // set (create) MATCH relationships going both ways
+    // if B is RECOMMENDED_FOR A
+    // set (update) A to B RECOMMENDED_FOR relationship to LIKES
+
+    await driver.close();
+    res.locals.BtoARelationship = BtoARelationship;
+    return next();
+  } catch (err) {
+    // await driver.close();
+    return next({
+      log: `createLikesOrMatch connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err,
+      },
+    });
+  }
+};
+
+// User A DISLIKES or UNMATCHES User B
+
+apiController.removeRelationships = async (req, res, next) => {
+  try {
+    const driver = neo4j.driver(
+      process.env.NEO4J_URI,
+      neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
+    );
+    const serverInfo = await driver.getServerInfo();
+    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+
+    // Use the driver to run queries
+    const { emailA, emailB } = req.params;
+
+    // remove all relationships (RECOMMENDED_FOR or LIKES) between A and B
+    const removedRelationships = await driver.executeQuery(
+      'MATCH (a:User WHERE a.email=$emailA)<-[r:]-(b:User WHERE b.email=$emailB) MATCH (a:User WHERE a.email=$emailA)-[s:]->(b:User WHERE b.email=$emailB) DELETE r, s RETURN r, s',
+      {
+        emailA,
+        emailB,
+      },
+      { database: 'neo4j' }
+    );
+
+    await driver.close();
+    res.locals.removedRelationships = removedRelationships;
+    return next();
+  } catch (err) {
+    // await driver.close();
+    return next({
+      log: `createLikesOrMatch connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err,
+      },
+    });
+  }
+};
 
 export default apiController;
