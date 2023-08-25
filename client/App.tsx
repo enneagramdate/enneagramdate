@@ -14,7 +14,7 @@ import userStore from './stores/userStore';
 
 const App = () => {
   const userId: UserId = userStore.use.userId();
-  // // use to selectively color the UI depending on the user's type
+  // * use to selectively color the UI depending on the user's type
   const userType: EnneagramType = userStore.use.userType();
   const setUserState = userStore.use.setUserState();
   console.log('if userId is null, this is true', userId === null);

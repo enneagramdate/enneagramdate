@@ -6,7 +6,9 @@ const Test = () => {
   const userType: EnneagramType = userStore((state) => state.userType);
   return (
     <>
-      <h1>Hello, your enneagram type is {userType}</h1>
+      <div className="alert alert-success">
+        Hello, your enneagram type is {userType}
+      </div>
     </>
   );
 };
