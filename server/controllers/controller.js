@@ -4,6 +4,101 @@ import dictionary from '../../enneagramCompatibilitiesDictionary.js';
 
 const apiController = {};
 
+// test DB
+
+apiController.getAllUsers = async (req, res, next) => {
+  try {
+    const driver = neo4j.driver(
+      process.env.NEO4J_URI,
+      neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
+    );
+    const serverInfo = await driver.getServerInfo();
+    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+
+    // Use the driver to run queries
+    const allUserNodes = await driver.executeQuery('MATCH (n:User) RETURN n', {
+      database: 'neo4j',
+    });
+    await driver.close();
+    res.locals.allUserNodes = allUserNodes;
+    return next();
+  } catch (err) {
+    // await driver.close();
+    return next({
+      log: `getAllUsers connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err,
+      },
+    });
+  }
+};
+
+apiController.getAllRelationships = async (req, res, next) => {
+  try {
+    const driver = neo4j.driver(
+      process.env.NEO4J_URI,
+      neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
+    );
+    const serverInfo = await driver.getServerInfo();
+    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+
+    // Use the driver to run queries
+    const allRelationships = await driver.executeQuery(
+      'MATCH ()-[r]-() RETURN r',
+      {
+        database: 'neo4j',
+      }
+    );
+    await driver.close();
+    res.locals.allRelationships = allRelationships;
+    return next();
+  } catch (err) {
+    // await driver.close();
+    return next({
+      log: `getAllRelationships connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err,
+      },
+    });
+  }
+};
+
+// ALTERNATIVE: kill DB Docker container. Restart container with command "docker run -p7474:7474 -p7687:7687 -d -e NEO4J_AUTH=neo4j/secretgraph neo4j:latest".
+apiController.deleteDB = async (req, res, next) => {
+  try {
+    const driver = neo4j.driver(
+      process.env.NEO4J_URI,
+      neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
+    );
+    const serverInfo = await driver.getServerInfo();
+    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+
+    // Use the driver to run queries
+    const deletedUserNodes = await driver.executeQuery(
+      'MATCH (n:User) DETACH DELETE n RETURN n',
+      {
+        database: 'neo4j',
+      }
+    );
+    await driver.close();
+    res.locals.deletedUserNodes = deletedUserNodes;
+    return next();
+  } catch (err) {
+    // await driver.close();
+    return next({
+      log: `deleteDB connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err,
+      },
+    });
+  }
+};
+
+// Compile a document of the shapes of the res.locals data you're persisting back to the FE to facilitate discussions about how FE recommendations / matches will sync with latest DB updates
+
 // Create a new User node
 
 apiController.createNewUserNode = async (req, res, next) => {

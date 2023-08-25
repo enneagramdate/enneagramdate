@@ -6,6 +6,24 @@ import apiController from '../controllers/controller.js';
 // create router
 const apiRouter = express.Router();
 
+// test DB
+apiRouter.get('/users', apiController.getAllUsers, (req, res) => {
+  res.status(200).json(res.locals);
+});
+
+apiRouter.get(
+  '/relationships',
+  apiController.getAllRelationships,
+  (req, res) => {
+    res.status(200).json(res.locals);
+  }
+);
+
+// ALTERNATIVE: kill DB Docker container
+apiRouter.get('/delete', apiController.deleteDB, (req, res) => {
+  res.status(200).json(res.locals);
+});
+
 // Login route (native auth with Passport)
 
 // Signup route (native auth with Passport)
