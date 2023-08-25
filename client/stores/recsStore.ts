@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createSelectors } from './utils';
-import { User } from '../types';
+import { User, RecsMap } from '../types';
 
 export interface RecsState {
   recs: User[];
@@ -23,18 +23,18 @@ export default recsStore;
 
 // try to build user
 export interface RecsStateMap {
-  recs: Map<string, User>;
-  setRecs: (recs: Map<string, User>) => void;
-  removeOneRec: (updatedRecs: Map<string, User>) => void;
+  recs: RecsMap;
+  setRecs: (recs: RecsMap) => void;
+  removeOneRec: (updatedRecs: RecsMap) => void;
   clearRecs: () => void;
 }
 
 // this implementation will require the transformation of the array of objects into a map before the state is set
 const recsStoreBaseMap = create<RecsStateMap>()((set) => ({
   recs: new Map(),
-  setRecs: (recs: Map<string, User>) => set((_state) => ({ recs: recs })),
+  setRecs: (recs: RecsMap) => set((_state) => ({ recs: recs })),
   // removeOneRec currently slices the first rec off the array and sets it to the resultant array
-  removeOneRec: (updatedRecs: Map<string, User>) =>
+  removeOneRec: (updatedRecs: RecsMap) =>
     set((state) => ({ recs: updatedRecs })),
   clearRecs: () => set((_state) => ({ recs: new Map() })),
 }));
