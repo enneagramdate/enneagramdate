@@ -2,15 +2,12 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
-  Link,
   Routes,
-  useNavigate,
   Navigate,
 } from 'react-router-dom';
 import './app.css';
 import Test from './Test';
 import Login from './Login';
-import Error from './Error';
 import userStore, { EnneagramType, UserId, UserState } from './userStore';
 
 const App = () => {
