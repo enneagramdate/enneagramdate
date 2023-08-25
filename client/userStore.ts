@@ -10,7 +10,7 @@ export interface UserState {
   clearUserState: () => void;
 }
 
-const useUserStore = create<UserState>()((set) => ({
+const userStore = create<UserState>()((set) => ({
   userId: null,
   userType: null,
   setUserState: (id: UserId, type: EnneagramType) =>
@@ -18,4 +18,4 @@ const useUserStore = create<UserState>()((set) => ({
   clearUserState: () => set((_state) => ({ userId: null, userType: null })),
 }));
 
-export default useUserStore;
+export default userStore;
