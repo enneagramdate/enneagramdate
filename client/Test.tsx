@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import useUserStore from './userStore';
-import { EnneagramType } from './userStore';
+import userStore from './stores/userStore';
+import { EnneagramType } from './types';
 
 const Test = () => {
-  const userType: EnneagramType | null = useUserStore(
-    (state) => state.userType
-  );
+  const userType: EnneagramType = userStore((state) => state.userType);
   return (
     <>
       <h1>Hello, your enneagram type is {userType}</h1>
