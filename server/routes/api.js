@@ -19,21 +19,13 @@ apiRouter.post(
 );
 
 // User A likes User B
-apiRouter.get(
-  '/api/likes/:emailA/:emailB',
-  apiController.createLikesOrMatch,
-  (req, res) => {
-    res.status(200).json(res.locals.BtoARelationship);
-  }
-);
+apiRouter.post('/likes', apiController.createLikesOrMatch, (req, res) => {
+  res.status(200).json(res.locals);
+});
 
 // User A dislikes or unmatches User B
-apiRouter.get(
-  '/api/dislikes/:emailA/:emailB',
-  apiController.removeRelationships,
-  (req, res) => {
-    res.status(200).json(res.locals.removedRelationships);
-  }
-);
+apiRouter.post('/dislikes', apiController.removeRelationships, (req, res) => {
+  res.status(200).json(res.locals);
+});
 
 export default apiRouter;
