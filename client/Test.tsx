@@ -3,11 +3,12 @@ import userStore from './stores/userStore';
 import { EnneagramType } from './types';
 
 const Test = () => {
-  const userType: EnneagramType = userStore((state) => state.userType);
+  const enneagramType = userStore.use.enneagramType();
+  const name = userStore.use.name();
   return (
     <>
       <div className="alert alert-success">
-        Hello, your enneagram type is {userType}
+        Hello, {name}, your enneagram type is {enneagramType}
       </div>
     </>
   );

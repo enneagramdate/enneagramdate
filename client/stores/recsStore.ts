@@ -12,7 +12,6 @@ export interface RecsState {
 const recsStoreBase = create<RecsState>()((set) => ({
   recs: new Map(),
   setRecs: (recs: RecsMap) => set((_state) => ({ recs: recs })),
-  // removeOneRec currently slices the first rec off the array and sets it to the resultant array
   removeOneRec: (updatedRecs: RecsMap) =>
     set((_state) => ({ recs: updatedRecs })),
   clearRecs: () => set((_state) => ({ recs: new Map() })),

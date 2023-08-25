@@ -13,13 +13,13 @@ import { EnneagramType, UserId } from './types';
 import userStore from './stores/userStore';
 
 const App = () => {
-  const userId: UserId = userStore.use.userId();
+  const userId: UserId = userStore.use.id();
   // * use to selectively color the UI depending on the user's type
-  const userType: EnneagramType = userStore.use.userType();
+  const userType: EnneagramType = userStore.use.enneagramType();
   const setUserState = userStore.use.setUserState();
   console.log('if userId is null, this is true', userId === null);
-  setUserState('1', '5');
-  console.log('if userId is null, this is false', userId, userId === null);
+  setUserState('1', '5', 'Jeff', 25, ['fake1.png', 'fake2.png', 'fake3.png']);
+  console.log('userId is now', userId);
   return (
     <>
       <Router>

@@ -1,20 +1,44 @@
 import { create } from 'zustand';
 import { createSelectors } from './utils';
-import { EnneagramType, UserId } from '../types';
+import { EnneagramType, User, UserId } from '../types';
 
 export interface UserState {
-  userId: UserId;
-  userType: EnneagramType;
-  setUserState: (id: string, type: string) => void;
+  id: UserId | null;
+  enneagramType: EnneagramType | null;
+  name: string | null;
+  age: number | null;
+  imgUrl: string | string[] | null;
+  setUserState: (
+    id: string,
+    type: string,
+    name: string,
+    age: number,
+    imgUrl: string | string[]
+  ) => void;
   clearUserState: () => void;
 }
 
 const userStoreBase = create<UserState>()((set) => ({
-  userId: null,
-  userType: null,
-  setUserState: (id: UserId, type: EnneagramType) =>
-    set((_state) => ({ userId: id, userType: type })),
-  clearUserState: () => set((_state) => ({ userId: null, userType: null })),
+  id: null,
+  enneagramType: null,
+  name: null,
+  age: null,
+  imgUrl: null,
+  setUserState: (
+    id: UserId,
+    enneagramType: EnneagramType,
+    name: string,
+    age: number,
+    imgUrl: string | string[]
+  ) => set((_state) => ({ id, enneagramType, name, age, imgUrl })),
+  clearUserState: () =>
+    set((_state) => ({
+      id: null,
+      enneagramType: null,
+      name: null,
+      age: null,
+      imgUrl: null,
+    })),
 }));
 
 // create an automatic selector-generating store:

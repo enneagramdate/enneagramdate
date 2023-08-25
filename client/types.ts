@@ -7,7 +7,7 @@ export interface User {
   enneagramType: EnneagramType;
   name: string;
   age: number;
-  imgUrl: string; // S3 url
+  imgUrl: string | string[]; // S3 url
 }
 
 export type RecsMap = Map<string, User>;
