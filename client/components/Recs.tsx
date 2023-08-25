@@ -10,29 +10,28 @@ Challenges:
 
 import React, { useEffect } from 'react';
 import axios from 'axios';
-import recsStore, { recsStoreMap } from '../stores/recsStore';
-import { EnneagramType, User, UserId } from '../types';
-import RecCard from './RecCard';
-import users from '../data/fakeUserData';
+import recsStore from '../stores/recsStore';
+import { EnneagramType, RecsMap, User, UserId } from '../types';
+// import RecCard from './RecCard';
+import fakeUsers from '../data/fakeUserData';
 
 const Recs = () => {
   // import state
-  const recs: User[] = recsStore.use.recs();
+  const recs: RecsMap = recsStore.use.recs();
   const setRecs = recsStore.use.setRecs();
-  const recsMap: Map<string, User> = recsStoreMap.use.recs();
-  const setRecsMap = recsStoreMap.use.setRecs();
-  const removeOneRecMap = recsStoreMap.use.removeOneRec();
+  const removeOneRec = recsStore.use.removeOneRec();
 
+  // ! TESTING FUNCTIONS
   useEffect(() => {
-    setRecsMap(users);
+    setRecs(fakeUsers);
   }, []);
-  console.log(recsMap);
+  console.log(recs);
   const onClickTest = () => {
-    const updatedState = new Map(recsMap);
-    updatedState.delete('9');
-    // call removeOneRec -- does it need to be passed anything? currently, no
-    removeOneRecMap(updatedState);
+    const updatedState = new Map(recs);
+    updatedState.delete('1');
+    removeOneRec(updatedState);
   };
+  // ! END OF TESTING FUNCTIONS
 
   // * function to fetch recs from the backend, this should be in a useEffect or something
   // TODO: refactor as this function may only need the user's id, not their type
@@ -41,7 +40,12 @@ const Recs = () => {
       // TODO: refactor get request to conform to API
       const response = await axios.get(`/recs/${id}/${type}`);
       const recsFromDB = response.data;
-      setRecs(recsFromDB);
+      // conver response from array of objects into a map for proper typing
+      const recsMap = new Map();
+      recsFromDB.forEach((person: User) => {
+        recsMap.set(person.id, person);
+      });
+      setRecs(recsMap);
     } catch (err) {
       // TODO: proper error handling
       return alert('sorry, nothing!');
@@ -49,7 +53,11 @@ const Recs = () => {
   };
 
   // TODO: map over the recs and render a RecCard for each
-  const recCards = recs.map((person) => console.log(person.name));
+  // ! hopefully using a map instead of an array doesn't break this;
+  /* I believe I can use Map.values(recs).map((person) => {
+    callback which renders the component
+  })  since  Map.values(some Map) returns an interator which has a .map method just like arrays*/
+  // ! worst case scenario I can refactor recs back to a User[]
 
   // TODO: this component should render one UserCard at a time, populating UserCards from the recs state
   // * for better Time Complexity, render the final UserCard and make the function to like/dislike pop set state to be recs - the last element (can I use pop here? probably not)
@@ -60,7 +68,7 @@ const Recs = () => {
         remove one rec from the recsMap
       </button>
       <h1>put a rec card here when it's built</h1>
-      {recCards[recCards.length - 1]}
+      {/* {recCards[recCards.length - 1]} */}
     </>
   );
 };
