@@ -11,3 +11,15 @@ dictionary.set(8, new Set([2, 5, 7]));
 dictionary.set(9, new Set([2, 3, 4, 6]));
 
 export default dictionary;
+
+// datestring format: '1995-05-10'
+export function getAge(dateString) {
+  var today = new Date();
+  var birthDate = new Date(dateString);
+  var age = today.getFullYear() - birthDate.getFullYear();
+  var m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}

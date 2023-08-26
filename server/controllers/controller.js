@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import neo4j from 'neo4j-driver';
-import dictionary from '../../enneagramCompatibilitiesDictionary.js';
+import { dictionary, getAge } from '../../utils.js';
 
 const apiController = {};
 
@@ -84,15 +84,15 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
     // User A = signed up / in User
     // User B = another User in DB
 
-    // store new user's email persisted via res.locals
-    const emailA =
-      res.locals.newUserNode.records[0]._fields[0].properties.email;
+    // destructure new user's info persisted via res.locals
+    const { email, enneagramType, seekAgeRange, seekGender, seekRelationship } =
+      res.locals.newUserNode.records[0]._fields[0].properties;
 
     // store all existing Users that are NOT the newly created User
     let allOtherUsers = await driver.executeQuery(
-      'MATCH (u:User WHERE u.email <> $emailA) RETURN u',
+      'MATCH (u:User WHERE u.email <> $email) RETURN u',
       {
-        emailA,
+        email,
       },
       { database: 'neo4j' }
     );
@@ -102,16 +102,22 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
       (record) => record._fields[0].properties
     );
 
-    // get A's enneagram type and Set of compatible types
-    const enneagramType =
-      res.locals.newUserNode.records[0]._fields[0].properties.enneagramType;
+    // get A's Set of compatible types
     const compatabilityResults = dictionary.get(enneagramType);
 
     // iterate over all User nodes that are NOT User A
     for (const userB of allOtherUsers) {
       // if User A's compatible types Set contains User B's enneagram type, create RECOMMENDED_FOR relationships both ways
       // Issue: "RETURN rAtoB, rBtoA" clause returns only the last pair of relationships created (i.e. if 6 are created, ids 4 and 5 are returned), but does update DB correctly
-      if (compatabilityResults.has(userB.enneagramType)) {
+      if (
+        // check User B is compatible with User A
+        compatabilityResults.has(userB.enneagramType) &&
+        seekAgeRange[0] <= getAge(userB.birthday) &&
+        getAge(userB.birthday) <= seekAgeRange[1] &&
+        seekGender === userB.gender &&
+        seekRelationship === userB.seekRelationship
+        // check User A is compatible with User B
+      ) {
         const newUserRecommendations = await driver.executeQuery(
           'MATCH (a:User WHERE a.email=$emailA) MATCH (b:User WHERE b.email=$emailB) MERGE (a)-[rAtoB:RECOMMENDED_FOR]->(b) MERGE (a)<-[rBtoA:RECOMMENDED_FOR]-(b)',
           {
