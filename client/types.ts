@@ -1,6 +1,7 @@
 export type EnneagramType = string | null;
 
 export type UserId = string | null;
+export type RecId = string;
 
 export interface User {
   id: UserId;
@@ -12,3 +13,4 @@ export interface User {
 
 export type RecsMap = Map<UserId, User>;
 export type Swipe = 'like' | 'dislike';
+export type SwipeCache = Map<RecId, Swipe>;

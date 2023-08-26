@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createSelectors } from './utils';
-import { EnneagramType, User, UserId } from '../types';
+import { EnneagramType, User, UserId, SwipeCache } from '../types';
 
 export interface UserState {
   id: UserId | null;
@@ -8,6 +8,9 @@ export interface UserState {
   name: string | null;
   age: number | null;
   imgUrl: string | string[] | null;
+  swipes: SwipeCache;
+  updateSwipes: (updatedCache: SwipeCache) => void;
+  clearSwipes: () => void;
   setUserState: (
     id: string,
     type: string,
@@ -39,6 +42,10 @@ const userStoreBase = create<UserState>()((set) => ({
       age: null,
       imgUrl: null,
     })),
+  swipes: new Map(),
+  updateSwipes: (updatedCache: SwipeCache) =>
+    set((_state) => ({ swipes: updatedCache })),
+  clearSwipes: () => set((_state) => ({ swipes: new Map() })),
 }));
 
 // create an automatic selector-generating store:
