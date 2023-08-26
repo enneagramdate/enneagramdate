@@ -1,6 +1,5 @@
 import { User } from '../types';
 
-const users: Map<string, User> = new Map();
 const usersArr: User[] = [];
 
 for (let i = 0; i < 10; i += 1) {
@@ -9,14 +8,10 @@ for (let i = 0; i < 10; i += 1) {
     enneagramType: i.toString(),
     name: `George #${i}`,
     age: 20 + i,
-    imgUrl: 'fake.png',
+    imgUrl: [
+      'https://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg',
+    ],
   });
 }
 
-// usersArr.forEach((user) => {
-//   users.set(user.id, user);
-// });
-
 export default usersArr;
-
-// console.log(users);

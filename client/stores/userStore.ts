@@ -7,7 +7,7 @@ export interface UserState {
   enneagramType: EnneagramType | null;
   name: string | null;
   age: number | null;
-  imgUrl: string | string[] | null;
+  imgUrl: string[] | null;
   swipes: SwipeCache;
   updateSwipes: (updatedCache: SwipeCache) => void;
   clearSwipes: () => void;
@@ -16,7 +16,7 @@ export interface UserState {
     type: string,
     name: string,
     age: number,
-    imgUrl: string | string[]
+    imgUrl: string[]
   ) => void;
   clearUserState: () => void;
 }
@@ -32,7 +32,7 @@ const userStoreBase = create<UserState>()((set) => ({
     enneagramType: EnneagramType,
     name: string,
     age: number,
-    imgUrl: string | string[]
+    imgUrl: string[]
   ) => set((_state) => ({ id, enneagramType, name, age, imgUrl })),
   clearUserState: () =>
     set((_state) => ({

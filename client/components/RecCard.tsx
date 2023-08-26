@@ -11,8 +11,11 @@ const RecCard = (rec: User) => {
   // destructure user information from props
   const { id, enneagramType, name, age, imgUrl } = rec;
   // import state as needed
+  // user state
   const user = userStore.use.name();
   const userType = userStore.use.enneagramType();
+  const userId = userStore.use.id();
+  // recs state
   const recs: User[] = recsStore.use.recs();
   const removeOneRec = recsStore.use.removeOneRec();
   const swipes: SwipeCache = userStore.use.swipes();
@@ -20,29 +23,34 @@ const RecCard = (rec: User) => {
   const clearSwipes = userStore.use.clearSwipes();
 
   // declare a function to handleSwipe
-  const handleSwipe = (swipe: Swipe, swipedUserId: UserId) => {
+  // ! WIP
+  const handleSwipe = async (swipe: Swipe, swipedUserId: UserId) => {
     // determine the user's decision
     const outcome = swipe === 'like' ? 'like' : 'dislike';
     // add the current swipe to state
     const updatedSwipes = new Map(swipes);
+    // ! at this point, need to discuss with Upasana how the BE is expecting the data to look regarding setting relationships
+    // ? if the route is something like /swipes/:userId, this should work for batch processing / single processing
+    // ? since the BE will get the user's ID from the params, and the swipee's ID(s) from the req.body
     updatedSwipes.set(swipedUserId!, swipe);
-    // state will not actually be updated until this execution context closes, it seems, so will need to pass updatedSwipes to the mapToJSON below
+    // updatedSwipes.set({ swiper: userId, swipee: swipedUserId }, swipe);
+    // state will not actually be updated until this execution context closes, so will need to pass updatedSwipes to the mapToJSON below, not swipes
     updateSwipes(updatedSwipes);
     // ? ping DB to update relationship accordingly -- better option would be to update the DB in batches, rather than on every swipe to increase performance and UX
-    // ! what number is best here for batch size?
+    // ! what number is best here for batch size? is batching even worth it for MVP? If no, then all this logic is emptied out and we don't even need to store swipes in state
+    // ! and we simple ping the DB on each swipe --- could also implement server-side caching of swipes to batch update the DB with all swipes every X minutes or something?
+    // ! in which case this API would simple ping the route that updates the cache on the server; this might be the best option
     if (updatedSwipes.size === 2) {
       const swipesBatch = mapToJSON(updatedSwipes);
-      console.log(swipesBatch);
+      console.log('Swipes Batch send to DB --->', swipesBatch);
       // TODO: then ping the DB with the batch -- will need to talk to Upasana about if it's feasible to do it this way in Neo4j
       // after the response, clear the swipes state
       clearSwipes();
     }
     // then update the recs state so the next recommendation renders for the user
-    // * and then update the recs state to remove the person we just swiped
     const updatedState = [...recs];
     updatedState.pop();
     removeOneRec(updatedState);
-    console.log(swipes);
   };
 
   return (
@@ -54,11 +62,22 @@ const RecCard = (rec: User) => {
         Click to go to back
       </button>
       <figure>
-        <img
+        {/* <img
           // TODO: replace fake src with imgUrl
           src="https://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg"
           alt="a really nice person, I bet"
-        />
+        /> */}
+        <div className="h-96 carousel carousel-vertical rounded-box">
+          <div className="carousel-item h-full">
+            <img src="https://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg" />
+          </div>
+          <div className="carousel-item h-full">
+            <img src="https://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg" />
+          </div>
+          <div className="carousel-item h-full">
+            <img src="https://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg" />
+          </div>
+        </div>
       </figure>
       <div className="card-body">
         <h2 className="card-title">
