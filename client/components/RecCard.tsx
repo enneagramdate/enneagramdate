@@ -53,6 +53,14 @@ const RecCard = (rec: User) => {
     removeOneRec(updatedState);
   };
 
+  const images = imgUrl.map((url) => {
+    return (
+      <div className="carousel-item h-full" key={url}>
+        <img src={url} />
+      </div>
+    );
+  });
+
   return (
     <div className="card w-96 bg-primary text-primary-content">
       <div className="alert alert-success">
@@ -61,24 +69,11 @@ const RecCard = (rec: User) => {
       <button className="btn btn-primary" onClick={() => navigate('/')}>
         Click to go to back
       </button>
-      <figure>
-        {/* <img
-          // TODO: replace fake src with imgUrl
-          src="https://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg"
-          alt="a really nice person, I bet"
-        /> */}
-        <div className="h-96 carousel carousel-vertical rounded-box">
-          <div className="carousel-item h-full">
-            <img src="https://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg" />
-          </div>
-          <div className="carousel-item h-full">
-            <img src="https://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg" />
-          </div>
-          <div className="carousel-item h-full">
-            <img src="https://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg" />
-          </div>
-        </div>
-      </figure>
+      {/* <figure> */}
+      <div className="h-96 carousel carousel-vertical rounded-box">
+        {images}
+      </div>
+      {/* </figure> */}
       <div className="card-body">
         <h2 className="card-title">
           {name}, {age}
