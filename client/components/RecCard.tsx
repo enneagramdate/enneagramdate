@@ -1,24 +1,27 @@
 import React from 'react';
 import { HiCheck, HiXMark } from 'react-icons/hi2';
-import { User, Swipe } from '../types';
+import { User, Swipe, UserId } from '../types';
 import recsStore from '../stores/recsStore';
 
 const RecCard = (user: User) => {
   // destructure user information from props
   const { id, enneagramType, name, age, imgUrl } = user;
   // import recs state so handleSwipe can update it
-  const recs = recsStore.use.recs();
+  const recs: User[] = recsStore.use.recs();
   const removeOneRec = recsStore.use.removeOneRec();
 
   // declare a function to handleSwipe
-  const handleSwipe = (swipe: Swipe, swipedUserId: string) => {
+  const handleSwipe = (swipe: Swipe, swipedUserId: UserId) => {
     // determine the user's decision
     const outcome = swipe === 'like' ? 'like' : 'dislike';
     // * ping DB to update relationship accordingly -- better option would be to update the DB in batches, rather than on every swipe to increase performance and UX
     // update state to remove the user that was just swiped
-    const updatedState = new Map(recs);
-    updatedState.delete(swipedUserId);
-    // call removeOneRec -- does it need to be passed anything? currently, no
+    //const updatedState = new Map(recs);
+    // updatedState.delete(swipedUserId);
+    // // call removeOneRec -- does it need to be passed anything? currently, no
+    // removeOneRec(updatedState);
+    const updatedState = [...recs];
+    updatedState.pop();
     removeOneRec(updatedState);
   };
 

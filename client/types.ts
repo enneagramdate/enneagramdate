@@ -10,6 +10,5 @@ export interface User {
   imgUrl: string | string[]; // S3 url
 }
 
-export type RecsMap = Map<string, User>;
-
+export type RecsMap = Map<UserId, User>;
 export type Swipe = 'like' | 'dislike';

@@ -1,7 +1,7 @@
 import { User } from '../types';
 
 const users: Map<string, User> = new Map();
-const usersArr = [];
+const usersArr: User[] = [];
 
 for (let i = 0; i < 10; i += 1) {
   usersArr.push({
@@ -13,10 +13,10 @@ for (let i = 0; i < 10; i += 1) {
   });
 }
 
-usersArr.forEach((user) => {
-  users.set(user.id, user);
-});
+// usersArr.forEach((user) => {
+//   users.set(user.id, user);
+// });
 
-export default users;
+export default usersArr;
 
 console.log(users);

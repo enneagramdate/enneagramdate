@@ -17,7 +17,7 @@ import fakeUsers from '../data/fakeUserData';
 
 const Recs = () => {
   // import state
-  const recs: RecsMap = recsStore.use.recs();
+  const recs: User[] = recsStore.use.recs();
   const setRecs = recsStore.use.setRecs();
   const removeOneRec = recsStore.use.removeOneRec();
 
@@ -27,9 +27,11 @@ const Recs = () => {
   }, []);
   console.log(recs);
   const onClickTest = () => {
-    const updatedState = new Map(recs);
-    updatedState.delete('1');
-    removeOneRec(updatedState);
+    for (let i = 0; i < recs.length; i += 1) {
+      const updatedState = [...recs];
+      updatedState.pop();
+      removeOneRec(updatedState);
+    }
   };
   // ! END OF TESTING FUNCTIONS
 
@@ -40,12 +42,12 @@ const Recs = () => {
       // TODO: refactor get request to conform to API
       const response = await axios.get(`/recs/${id}/${type}`);
       const recsFromDB = response.data;
-      // conver response from array of objects into a map for proper typing
-      const recsMap = new Map();
-      recsFromDB.forEach((person: User) => {
-        recsMap.set(person.id, person);
-      });
-      setRecs(recsMap);
+      // convert response from array of objects into a map for proper typing
+      // const recsMap: RecsMap = new Map();
+      // recsFromDB.forEach((person: User) => {
+      //   recsMap.set(person.id, person);
+      // });
+      setRecs(recsFromDB);
     } catch (err) {
       // TODO: proper error handling
       return alert('sorry, nothing!');
