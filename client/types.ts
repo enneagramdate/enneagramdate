@@ -14,3 +14,6 @@ export interface User {
 export type RecsMap = Map<UserId, User>;
 export type Swipe = 'like' | 'dislike';
 export type SwipeCache = Map<RecId, Swipe>;
+// export interface SwipeCache {
+//   [key: UserId]: Swipe
+// }

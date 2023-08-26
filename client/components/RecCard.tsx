@@ -1,51 +1,58 @@
 import React from 'react';
 import { HiCheck, HiXMark } from 'react-icons/hi2';
+import { useNavigate } from 'react-router-dom';
 import { User, Swipe, UserId, RecId, SwipeCache } from '../types';
 import recsStore from '../stores/recsStore';
 import userStore from '../stores/userStore';
+import { mapToJSON } from '../data/utils';
 
-const RecCard = (user: User) => {
+const RecCard = (rec: User) => {
+  const navigate = useNavigate();
   // destructure user information from props
-  const { id, enneagramType, name, age, imgUrl } = user;
-  // import recs state so handleSwipe can update it
+  const { id, enneagramType, name, age, imgUrl } = rec;
+  // import state as needed
+  const user = userStore.use.name();
+  const userType = userStore.use.enneagramType();
   const recs: User[] = recsStore.use.recs();
   const removeOneRec = recsStore.use.removeOneRec();
-  const clearRecs = recsStore.use.clearRecs();
   const swipes: SwipeCache = userStore.use.swipes();
   const updateSwipes = userStore.use.updateSwipes();
   const clearSwipes = userStore.use.clearSwipes();
 
   // declare a function to handleSwipe
   const handleSwipe = (swipe: Swipe, swipedUserId: UserId) => {
-    // * determine the user's decision
+    // determine the user's decision
     const outcome = swipe === 'like' ? 'like' : 'dislike';
-    // * ping DB to update relationship accordingly -- better option would be to update the DB in batches, rather than on every swipe to increase performance and UX
-    // ! what number is best here for batch size?
-    if (swipes.size >= 2) {
-      // first convert swipes state (a Map) into an object
-      const swipesObj = Object.fromEntries(swipes);
-      // then convert to JSON
-      const swipesBatch = JSON.stringify(swipesObj);
-      console.log(swipesObj);
-      // ? then ping the DB with the batch -- will need to talk to Upasana about if it's feasible to do it this way in Neo4j
-      // after the response, clear the swipes state
-      clearSwipes();
-      clearRecs();
-    }
-    // * if it isn't time to ping the DB yet, we just update swipes state
+    // add the current swipe to state
     const updatedSwipes = new Map(swipes);
     updatedSwipes.set(swipedUserId!, swipe);
+    // state will not actually be updated until this execution context closes, it seems, so will need to pass updatedSwipes to the mapToJSON below
     updateSwipes(updatedSwipes);
-    // console.log('HERE ARE THE STORED SWIPES FOR BATCH INSERT', swipes);
-    // console.log('HERE IS THE  NUMBER OF SWIPES STORED', swipes.size);
+    // ? ping DB to update relationship accordingly -- better option would be to update the DB in batches, rather than on every swipe to increase performance and UX
+    // ! what number is best here for batch size?
+    if (updatedSwipes.size === 2) {
+      const swipesBatch = mapToJSON(updatedSwipes);
+      console.log(swipesBatch);
+      // TODO: then ping the DB with the batch -- will need to talk to Upasana about if it's feasible to do it this way in Neo4j
+      // after the response, clear the swipes state
+      clearSwipes();
+    }
+    // then update the recs state so the next recommendation renders for the user
     // * and then update the recs state to remove the person we just swiped
     const updatedState = [...recs];
     updatedState.pop();
     removeOneRec(updatedState);
+    console.log(swipes);
   };
 
   return (
     <div className="card w-96 bg-primary text-primary-content">
+      <div className="alert alert-success">
+        Hello, {user}, your enneagram type is {userType}
+      </div>
+      <button className="btn btn-primary" onClick={() => navigate('/')}>
+        Click to go to back
+      </button>
       <figure>
         <img
           // TODO: replace fake src with imgUrl

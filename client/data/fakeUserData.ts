@@ -19,4 +19,4 @@ for (let i = 0; i < 10; i += 1) {
 
 export default usersArr;
 
-console.log(users);
+// console.log(users);

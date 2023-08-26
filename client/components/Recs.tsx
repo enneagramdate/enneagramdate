@@ -20,20 +20,12 @@ const Recs = () => {
   // import state
   const recs: User[] = recsStore.use.recs();
   const setRecs = recsStore.use.setRecs();
-  const removeOneRec = recsStore.use.removeOneRec();
 
   // ! TESTING FUNCTIONS
   useEffect(() => {
     setRecs(fakeUsers);
   }, []);
-  console.log(recs);
-  const onClickTest = () => {
-    for (let i = 0; i < recs.length; i += 1) {
-      const updatedState = [...recs];
-      updatedState.pop();
-      removeOneRec(updatedState);
-    }
-  };
+  // console.log(recs);
   // ! END OF TESTING FUNCTIONS
 
   // * function to fetch recs from the backend, this should be in a useEffect or something
@@ -59,21 +51,14 @@ const Recs = () => {
         name={person.name}
         age={person.age}
         imgUrl={person.imgUrl}
+        key={person.id}
       />
     );
   });
-  console.log(recCards);
+  // console.log(recCards);
   // TODO: this component should render one UserCard at a time, populating UserCards from the recs state
   // * for better Time Complexity, render the final UserCard and make the function to like/dislike pop set state to be recs - the last element
-  return (
-    <>
-      <button className="btn btn-error" onClick={onClickTest}>
-        remove one rec from the recs (fake a swipe, basically)
-      </button>
-      {/* <h1>put a rec card here when it's built</h1> */}
-      {recCards[recCards.length - 1]}
-    </>
-  );
+  return <>{recCards[recCards.length - 1]}</>;
 };
 
 export default Recs;
