@@ -1,5 +1,3 @@
-// Reference: https://enneagramtest.com/blog/enneagram-compatibility
-
 const dictionary = new Map();
 
 dictionary.set(1, new Set([2, 5, 7]));
