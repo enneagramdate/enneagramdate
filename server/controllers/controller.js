@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import neo4j from 'neo4j-driver';
 import { dictionary, getAge } from '../../utils.js';
+import { point } from '@turf/helpers';
+import distance from '@turf/distance';
 
 const apiController = {};
 
@@ -67,8 +69,7 @@ apiController.createNewUserNode = async (req, res, next) => {
   }
 };
 
-// For the new User node, create RECOMMENDED_FOR relationships with all other enneagram-compatible partners in DB
-// Apply properties to each relationship
+// For the new User node, create RECOMMENDED_FOR relationships with all other compatible partners in DB
 
 apiController.createNewUserRecommendations = async (req, res, next) => {
   try {
@@ -84,9 +85,18 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
     // User A = signed up / in User
     // User B = another User in DB
 
-    // destructure new user's info persisted via res.locals
-    const { email, enneagramType, seekAgeRange, seekGender, seekRelationship } =
-      res.locals.newUserNode.records[0]._fields[0].properties;
+    // destructure User A's info persisted via res.locals
+    const {
+      email,
+      enneagramType,
+      birthday,
+      seekAgeRange,
+      gender,
+      seekGender,
+      seekRelationship,
+      location,
+      seekRadius,
+    } = res.locals.newUserNode.records[0]._fields[0].properties;
 
     // store all existing Users that are NOT the newly created User
     let allOtherUsers = await driver.executeQuery(
@@ -96,32 +106,57 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
       },
       { database: 'neo4j' }
     );
-
     // parse for just the user's properties (i.e. form info they provided on signup)
     allOtherUsers = allOtherUsers.records.map(
       (record) => record._fields[0].properties
     );
 
-    // get A's Set of compatible types
-    const compatabilityResults = dictionary.get(enneagramType);
+    // get User A's Set of compatible types
+    const compatibleTypesForA = dictionary.get(enneagramType);
+    // get User A's age
+    const userAAge = getAge(birthday);
+    // get User A's geolocation
+    const userALocation = point(location);
 
     // iterate over all User nodes that are NOT User A
     for (const userB of allOtherUsers) {
-      // if User A's compatible types Set contains User B's enneagram type, create RECOMMENDED_FOR relationships both ways
-      // Issue: "RETURN rAtoB, rBtoA" clause returns only the last pair of relationships created (i.e. if 6 are created, ids 4 and 5 are returned), but does update DB correctly
+      // get User B's age
+      const userBAge = getAge(userB.birthday);
+      // get User B's location, then calculate distance between A and B
+      const userBLocation = point(userB.location);
+      const distanceAToB = distance(userALocation, userBLocation, {
+        units: 'miles',
+      });
+
+      // do compatibility checks between A and B (and vice versa) to ensure mutual compatibility before creating mutual RECOMMENDED_FORs
       if (
-        // check User B is compatible with User A
-        compatabilityResults.has(userB.enneagramType) &&
-        seekAgeRange[0] <= getAge(userB.birthday) &&
-        getAge(userB.birthday) <= seekAgeRange[1] &&
+        // check B's enneagramType is in A's compatible types Set
+        compatibleTypesForA.has(userB.enneagramType) &&
+        // check B's age falls in A's seekAgeRange
+        seekAgeRange[0] <= userBAge &&
+        userBAge <= seekAgeRange[1] &&
+        // check B's gender matches A's seekGender
         seekGender === userB.gender &&
-        seekRelationship === userB.seekRelationship
-        // check User A is compatible with User B
+        // check B's seekRel matches A's seekRel
+        seekRelationship === userB.seekRelationship &&
+        // check B's location is in A's seekRadius
+        distanceAToB <= seekRadius &&
+        // Note: We've already confirmed compatibilities are MUTUAL. If User A's compatible types Set contains User B's enneagram type, vice versa is also true, so we don't need to check both ways.
+        // check A's age falls in B's seekAgeRange
+        userB.seekAgeRange[0] <= userAAge &&
+        userAAge <= userB.seekAgeRange[1] &&
+        // check A's gender matches B's seekGender
+        userB.seekGender === gender &&
+        // Note: We've already onfirmed A's and B's seekRelationships match.
+        // check A's location is in B's seekRadius
+        distanceAToB <= userB.seekRadius
       ) {
+        // if all checks are met, create RECOMMENDED_FOR relationships both ways
+        // Issue: "RETURN rAtoB, rBtoA" clause returns only the last pair of relationships created (i.e. if 6 are created, ids 4 and 5 are returned), but the query does update DB correctly. Fix: Send the relationships to FE in the next controller.
         const newUserRecommendations = await driver.executeQuery(
-          'MATCH (a:User WHERE a.email=$emailA) MATCH (b:User WHERE b.email=$emailB) MERGE (a)-[rAtoB:RECOMMENDED_FOR]->(b) MERGE (a)<-[rBtoA:RECOMMENDED_FOR]-(b)',
+          'MATCH (a:User WHERE a.email=$email) MATCH (b:User WHERE b.email=$emailB) MERGE (a)-[rAtoB:RECOMMENDED_FOR]->(b) MERGE (a)<-[rBtoA:RECOMMENDED_FOR]-(b)',
           {
-            emailA,
+            email,
             emailB: userB.email,
           },
           { database: 'neo4j' }
@@ -143,7 +178,7 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
   }
 };
 
-// return all people B that are recommended for, like, or matched with A; we don't want to serve up people A is recommended for, likes, dislikes or unmatched
+// return all users B that are recommended for, like, or matched with User A; we don't want to serve up people A is recommended for, likes, dislikes or unmatched
 
 apiController.sendLatestRelationships = async (req, res, next) => {
   try {
@@ -156,7 +191,7 @@ apiController.sendLatestRelationships = async (req, res, next) => {
     console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
 
     let userElId;
-    // Signup case: get new user's elementId persisted via res.locals
+    // Signup case: get new user's elementId from res.locals
     // Login case: destructure user's elementId from POST body (safer to store elementId on FE than user's email)
     // Refer to Express doc: https://expressjs.com/en/guide/routing.html. Route parameters must be made up of “word characters” ([A-Za-z0-9_]), so passing elementIds or emails as params won't work.
     if (res.locals.newUserNode) {
@@ -166,7 +201,7 @@ apiController.sendLatestRelationships = async (req, res, next) => {
       userElId = userId;
     }
 
-    // store all users that are recommended for, like, or matched with current user
+    // store all users that are recommended for, like, or matched with User A
     const latestRelationships = await driver.executeQuery(
       'MATCH (a:User WHERE elementId(a)=$userElId)<-[r]-(b:User) RETURN b, r',
       {

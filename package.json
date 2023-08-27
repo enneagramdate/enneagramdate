@@ -31,6 +31,8 @@
     "@babel/core": "^7.22.10",
     "@babel/preset-env": "^7.22.10",
     "@babel/preset-react": "^7.22.5",
+    "@turf/distance": "^6.5.0",
+    "@turf/helpers": "^6.5.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "babel-loader": "^9.1.3",
