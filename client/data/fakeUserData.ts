@@ -2,7 +2,7 @@ import { User } from '../types';
 
 const usersArr: User[] = [];
 
-for (let i = 0; i < 10; i += 1) {
+for (let i = 1; i < 10; i += 1) {
   usersArr.push({
     id: i.toString(),
     enneagramType: i.toString(),

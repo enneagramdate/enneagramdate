@@ -18,7 +18,7 @@ const RecCard = (rec: User) => {
   const userId = userStore.use.id();
   // recs state
   const recs: User[] = recsStore.use.recs();
-  const removeOneRec = recsStore.use.removeOneRec();
+  const setRecs = recsStore.use.setRecs();
   const swipes: SwipeCache = userStore.use.swipes();
   const updateSwipes = userStore.use.updateSwipes();
   const clearSwipes = userStore.use.clearSwipes();
@@ -26,8 +26,6 @@ const RecCard = (rec: User) => {
   // declare a function to handleSwipe
   // ! WIP
   const handleSwipe = async (swipe: Swipe, swipedUserId: UserId) => {
-    // determine the user's decision
-    const outcome = swipe === 'like' ? 'like' : 'dislike';
     // add the current swipe to state
     const updatedSwipes = new Map(swipes);
     // ! at this point, need to discuss with Upasana how the BE is expecting the data to look regarding setting relationships
@@ -49,9 +47,9 @@ const RecCard = (rec: User) => {
       clearSwipes();
     }
     // then update the recs state so the next recommendation renders for the user
-    const updatedState = [...recs];
-    updatedState.pop();
-    removeOneRec(updatedState);
+    const updatedRecsState = [...recs];
+    updatedRecsState.pop();
+    setRecs(updatedRecsState);
   };
 
   const images = imgUrl.map((url) => {
@@ -63,7 +61,7 @@ const RecCard = (rec: User) => {
   });
 
   return (
-    <div className="card w-96 bg-recCard text-primary-content">
+    <div className="card w-96 bg-primary text-primary-content">
       <div className="alert alert-success">
         Hello, {user}, your enneagram type is {userType}
       </div>

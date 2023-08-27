@@ -34,15 +34,12 @@ import { User } from '../types';
 export interface RecsState {
   recs: User[];
   setRecs: (recs: User[]) => void;
-  removeOneRec: (updatedRecs: User[]) => void;
   clearRecs: () => void;
 }
 
 const recsStoreBase = create<RecsState>()((set) => ({
   recs: [],
   setRecs: (recs: User[]) => set((_state) => ({ recs: recs })),
-  removeOneRec: (updatedRecs: User[]) =>
-    set((_state) => ({ recs: updatedRecs })),
   clearRecs: () => set((_state) => ({ recs: [] })),
 }));
 

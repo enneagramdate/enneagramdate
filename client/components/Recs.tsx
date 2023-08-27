@@ -22,11 +22,9 @@ const Recs = () => {
   const setRecs = recsStore.use.setRecs();
 
   // ! TESTING FUNCTIONS
-  useEffect(() => {
-    setRecs(fakeUsers);
-  }, []);
-  // console.log(recs);
+  if (!recs.length) setRecs(fakeUsers);
   // ! END OF TESTING FUNCTIONS
+  // TODO: this is how more recs will be fetched ahead of time: if (recs.length === 5) await getRecs();
 
   // * function to fetch recs from the backend, this should be in a useEffect or something
   // TODO: refactor as this function may only need the user's id, not their type
@@ -35,7 +33,8 @@ const Recs = () => {
       // TODO: refactor get request to conform to API
       const response = await axios.get(`/recs/${id}/${type}`);
       const recsFromDB = response.data;
-      setRecs(recsFromDB);
+      // set recs to append the existing recs to the top of the recs stack so they go first
+      setRecs([...recsFromDB, ...recs]);
     } catch (err) {
       // TODO: proper error handling
       return alert('sorry, nothing!');
