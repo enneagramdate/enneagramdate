@@ -56,14 +56,14 @@ const RecCard = (rec: User) => {
 
   const images = imgUrl.map((url) => {
     return (
-      <div className="carousel-item h-full" key={id}>
+      <div className="carousel-item h-full" key={url}>
         <img src={url} />
       </div>
     );
   });
 
   return (
-    <div className="card w-96 bg-primary text-primary-content">
+    <div className="card w-96 bg-recCard text-primary-content">
       <div className="alert alert-success">
         Hello, {user}, your enneagram type is {userType}
       </div>

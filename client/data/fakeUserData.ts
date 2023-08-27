@@ -9,9 +9,9 @@ for (let i = 0; i < 10; i += 1) {
     name: `George #${i}`,
     age: 20 + i,
     imgUrl: [
-      'https://purrfectcatbreeds.com/wp-content/uploads/2014/06/abyssinian-main.jpg',
-      'https://miro.medium.com/v2/resize:fill:176:176/1*TzfP1ghe_d994dWtFWvaGg.jpeg',
-      'https://clipart.info/images/minicovers/150368783867-dog-png-image-picture-download-dogs.png',
+      'https://www.fetchfind.com/blog/wp-content/uploads/2017/08/cat-2734999_1920-5-common-cat-sounds.jpg',
+      'https://cdn.wallpapersafari.com/62/97/j7DWvq.jpg',
+      'https://wallsdesk.com/wp-content/uploads/2018/03/Cat-High-Definition-Wallpapers-2.jpg',
     ],
   });
 }
