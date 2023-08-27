@@ -6,7 +6,9 @@ export default {
     container: {
       center: true,
     },
-    colors: {},
+    colors: {
+      9: '#f5047b',
+    },
     fontFamily: {},
     extend: {},
   },

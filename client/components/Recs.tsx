@@ -56,9 +56,13 @@ const Recs = () => {
     );
   });
   // console.log(recCards);
-  // TODO: this component should render one UserCard at a time, populating UserCards from the recs state
-  // * for better Time Complexity, render the final UserCard and make the function to like/dislike pop set state to be recs - the last element
-  return <>{recCards[recCards.length - 1]}</>;
+  // TODO: this component should render one RecCard at a time, populating RecCards from the recs state
+  // * for better Time Complexity, render the final RecCard and make the function to like/dislike pop set state to be recs - the last element
+  return (
+    <div className="flex flex-center justify-center align-center">
+      {recCards[recCards.length - 1]}
+    </div>
+  );
 };
 
 export default Recs;

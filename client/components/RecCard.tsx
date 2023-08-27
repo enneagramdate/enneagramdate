@@ -1,10 +1,11 @@
 import React from 'react';
 import { HiCheck, HiXMark } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
-import { User, Swipe, UserId, RecId, SwipeCache } from '../types';
+import { User, Swipe, UserId, SwipeCache } from '../types';
 import recsStore from '../stores/recsStore';
 import userStore from '../stores/userStore';
 import { mapToJSON } from '../data/utils';
+import EnneagramBadge from './EnneagramBadge';
 
 const RecCard = (rec: User) => {
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ const RecCard = (rec: User) => {
 
   const images = imgUrl.map((url) => {
     return (
-      <div className="carousel-item h-full" key={url}>
+      <div className="carousel-item h-full" key={id}>
         <img src={url} />
       </div>
     );
@@ -66,20 +67,17 @@ const RecCard = (rec: User) => {
       <div className="alert alert-success">
         Hello, {user}, your enneagram type is {userType}
       </div>
-      <button className="btn btn-primary" onClick={() => navigate('/')}>
+      <button className="btn btn-info" onClick={() => navigate('/')}>
         Click to go to back
       </button>
-      {/* <figure> */}
       <div className="h-96 carousel carousel-vertical rounded-box">
         {images}
       </div>
-      {/* </figure> */}
       <div className="card-body">
-        <h2 className="card-title">
+        <div className="card-title">
           {name}, {age}
-        </h2>
-
-        <h3 className="card-title">{enneagramType}</h3>
+        </div>
+        <EnneagramBadge enneagramType={enneagramType} />
         <div className="card-actions">
           <button
             className="btn btn-error btn-circle justify-left"
@@ -88,7 +86,7 @@ const RecCard = (rec: User) => {
             <HiXMark />
           </button>
           <button
-            className="btn btn-primary btn-circle justify-right"
+            className="btn btn-success btn-circle justify-right"
             onClick={() => handleSwipe('like', id)}
           >
             <HiCheck />
