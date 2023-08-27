@@ -17,6 +17,8 @@ export default {
       2: '#21669E',
       1: '#2826A7',
       recCard: '#cba2ff',
+      black: '#414A4C',
+      white: '#F8F8FF',
     },
     fontFamily: {},
     extend: {},
