@@ -69,6 +69,8 @@ apiController.createNewUserNode = async (req, res, next) => {
   }
 };
 
+// Add controller for User A to be able to edit their profile information (replace images, change preferences, etc.)
+
 // For the new User node, create RECOMMENDED_FOR relationships with all other compatible partners in DB
 
 apiController.createNewUserRecommendations = async (req, res, next) => {
