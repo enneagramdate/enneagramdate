@@ -14,7 +14,7 @@ import recsStore from '../stores/recsStore';
 import { EnneagramType, User, UserId } from '../types';
 // import RecCard from './RecCard';
 import fakeUsers from '../data/fakeUserData';
-import RecCard from './RecCard';
+import RecCard from '../components/RecCard';
 
 const Recs = () => {
   // import state

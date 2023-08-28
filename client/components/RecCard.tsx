@@ -61,34 +61,39 @@ const RecCard = (rec: User) => {
   });
 
   return (
-    <div className="card w-96 bg-primary text-primary-content">
-      <div className="alert alert-success">
+    <div className="card-container">
+      <div className="card w-96 bg-primary text-primary-content">
+        {/* <div className="alert alert-success">
         Hello, {user}, your enneagram type is {userType}
       </div>
       <button className="btn btn-info" onClick={() => navigate('/')}>
         Click to go to back
-      </button>
-      <div className="h-96 carousel carousel-vertical rounded-box">
-        {images}
-      </div>
-      <div className="card-body">
-        <div className="card-title">
-          {name}, {age}
-        </div>
-        <EnneagramBadge enneagramType={enneagramType} />
-        <div className="card-actions">
-          <button
-            className="btn btn-error btn-circle justify-left"
-            onClick={() => handleSwipe('dislike', id)}
-          >
-            <HiXMark />
-          </button>
-          <button
-            className="btn btn-success btn-circle justify-right"
-            onClick={() => handleSwipe('like', id)}
-          >
-            <HiCheck />
-          </button>
+      </button> */}
+        <div className="h-8 bg-primary"></div>
+        <div className="h-96 carousel carousel-vertical">{images}</div>
+        <div className="card-body">
+          <div className="rec-info flex flex-center justify-center space-x-24 border border-default">
+            <div className="card-title">
+              {name}, {age}
+            </div>
+            <div className="flex flex-end">
+              <EnneagramBadge enneagramType={enneagramType} />
+            </div>
+          </div>
+          <div className="card-actions flex flex-center space-x-48">
+            <button
+              className="btn btn-error btn-circle justify-left"
+              onClick={() => handleSwipe('dislike', id)}
+            >
+              <HiXMark />
+            </button>
+            <button
+              className="btn btn-success btn-circle justify-right"
+              onClick={() => handleSwipe('like', id)}
+            >
+              <HiCheck />
+            </button>
+          </div>
         </div>
       </div>
     </div>

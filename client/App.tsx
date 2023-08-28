@@ -8,7 +8,7 @@ import {
 import './app.css';
 import Test from './Test';
 import Login from './Login';
-import Recs from './components/Recs';
+import Recs from './pages/Recs';
 import { EnneagramType, UserId } from './types';
 import userStore from './stores/userStore';
 
