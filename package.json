@@ -2,9 +2,10 @@
   "name": "enneagramdate",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.tsx",
+  "type": "module",
   "scripts": {
-    "dev": "webpack-dev-server --open & nodemon server/server.ts",
+    "dev": "webpack-dev-server --open & nodemon server/server.js",
     "build": "webpack"
   },
   "repository": {
@@ -18,6 +19,9 @@
   },
   "homepage": "https://github.com/enneagramdate/enneagramdate#readme",
   "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "neo4j-driver": "^5.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0",
@@ -30,6 +34,8 @@
     "@babel/core": "^7.22.10",
     "@babel/preset-env": "^7.22.10",
     "@babel/preset-react": "^7.22.5",
+    "@turf/distance": "^6.5.0",
+    "@turf/helpers": "^6.5.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@types/react-router-dom": "^5.3.3",
@@ -41,6 +47,7 @@
     "husky": "^8.0.3",
     "postcss": "^8.4.28",
     "postcss-loader": "^7.3.3",
+    "nodemon": "^3.0.1",
     "style-loader": "^3.3.3",
     "ts-loader": "^9.4.4",
     "typescript": "^5.1.6",
