@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import neo4j from 'neo4j-driver';
-import { dictionary, getAge } from '../../utils.js';
+import { dictionary, getAge } from '../utils.js';
 import { point } from '@turf/helpers';
 import distance from '@turf/distance';
 
