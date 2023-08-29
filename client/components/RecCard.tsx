@@ -35,8 +35,8 @@ const RecCard = (rec: RecommendedUser) => {
     // const swipesBatch = mapToJSON(updatedSwipes);
     // console.log('Swipes Batch send to DB --->', swipesBatch);
     const body = {
-      elementIdA: userId || '4:6d64226f-c501-485b-83e7-69790240b0ea:71',
-      elementIdB: swipedUserId || '4:6d64226f-c501-485b-83e7-69790240b0ea:70',
+      elementIdA: userId,
+      elementIdB: swipedUserId,
     };
     const swipeResponse = await axios.post(route, body);
     // ! after the response, clear the swipes state (can delete all this if swipe state is made unnecessary)
