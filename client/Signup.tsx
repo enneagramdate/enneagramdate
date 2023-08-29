@@ -1,20 +1,63 @@
 import React, { KeyboardEventHandler, useState } from 'react';
+import { google } from 'google-maps';
 import useUserStore, { UserState } from './userStore';
 import isEmail from 'validator/lib/isEmail';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+interface Info {
+  email: string;
+  password: string;
+  fullName: string;
+  enneagramType: number;
+  birthday: string;
+  seekAgeRange: number[] | null;
+  gender: string;
+  seekGender: string;
+  seekRelationship: string;
+  position: google.maps.LatLng | null;
+  seekRadius: number;
+}
+
+const defaultInfo: Info = {
+  email: '',
+  password: '',
+  fullName: '',
+  enneagramType: 0,
+  birthday: '',
+  seekAgeRange: null,
+  gender: '',
+  seekGender: '',
+  seekRelationship: '',
+  position: null,
+  seekRadius: 0,
+};
+
+const Signup = () => {
   const user: UserState = useUserStore((state) => state);
   const navigate = useNavigate();
+  const geocoder = new google.maps.Geocoder();
 
-  const [info, updateInfo] = useState({
-    email: '',
-    password: '',
-  });
+  const [info, updateInfo] = useState(defaultInfo);
+
+  const zipToPos = (zip: string) => {
+    geocoder.geocode({ address: zip }, function (results, status) {
+      if (status === google.maps.GeocoderStatus.OK) {
+        const centroid = results[0].geometry.location;
+        const curInfo = { ...info };
+        curInfo.position = centroid;
+        updateInfo(curInfo);
+      } else {
+        const curErr = { ...errors };
+        curErr.position = status;
+        updateErrors(curErr);
+      }
+    });
+  };
 
   const [errors, updateErrors] = useState({
     email: false,
     go: true,
+    position: '',
     alert: '',
   });
 
@@ -113,4 +156,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

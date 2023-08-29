@@ -6,15 +6,14 @@ export type UserId = string | number;
 export interface UserState {
   userId: UserId | null;
   userType: EnneagramType | null;
-  setUserState: (id: string | number, type: string | number) => void;
+  setUserState: (user: UserState) => void;
   clearUserState: () => void;
 }
 
 const userStore = create<UserState>()((set) => ({
   userId: null,
   userType: null,
-  setUserState: (id: UserId, type: EnneagramType) =>
-    set((_state) => ({ userId: id, userType: type })),
+  setUserState: (user: UserState) => set((_state) => user),
   clearUserState: () => set((_state) => ({ userId: null, userType: null })),
 }));
 

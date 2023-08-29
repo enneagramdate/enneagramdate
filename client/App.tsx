@@ -6,8 +6,9 @@ import {
   Navigate,
 } from 'react-router-dom';
 import './app.css';
-import Test from './Test';
 import Login from './Login';
+import Splash from './Splash';
+import Signup from './Signup';
 import userStore, { EnneagramType, UserId, UserState } from './userStore';
 
 const App = () => {
@@ -23,11 +24,9 @@ const App = () => {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route
-            path="/test"
-            element={userId ? <Test /> : <Navigate to="/" />}
-          />
+          <Route path="/" element={<Splash />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </Router>
     </>
