@@ -8,6 +8,7 @@ const EnneagramBadge = ({
   enneagramType: EnneagramType;
 }) => {
   const textColor = setTypeTextColor(enneagramType);
+  // ! these dynamic class names only work because of the strings in data/utils.ts
   return (
     <div
       className={`stat bg-${enneagramType} rounded-full w-20 h-20 flex justify-center items-center`}
