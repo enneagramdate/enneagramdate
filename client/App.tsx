@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import './app.css';
 import Test from './Test';
-import Login from './Login';
+import FakeHome from './FakeHome';
 import Recs from './pages/Recs';
 import { EnneagramType, UserId } from './types';
 import userStore from './stores/userStore';
@@ -25,7 +25,7 @@ const App = () => {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<FakeHome />} />
           <Route
             path="/test"
             element={userId ? <Test /> : <Navigate to="/" />}

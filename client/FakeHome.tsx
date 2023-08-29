@@ -43,7 +43,7 @@ const handleClick = async () => {
   populateDB();
 };
 
-const Login = () => {
+const FakeHome = () => {
   const navigate = useNavigate();
   return (
     <>
@@ -57,4 +57,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default FakeHome;
