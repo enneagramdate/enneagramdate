@@ -3,7 +3,7 @@ import { createSelectors } from './utils';
 import { EnneagramType, User, UserId, SwipeCache } from '../types';
 
 export interface UserState {
-  id: UserId | null;
+  elementId: UserId | null;
   enneagramType: EnneagramType | null;
   name: string | null;
   age: number | null;
@@ -22,7 +22,7 @@ export interface UserState {
 }
 
 const userStoreBase = create<UserState>()((set) => ({
-  id: null,
+  elementId: null,
   enneagramType: null,
   name: null,
   age: null,

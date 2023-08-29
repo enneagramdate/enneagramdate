@@ -312,7 +312,7 @@ apiController.removeRelationships = async (req, res, next) => {
 
     // destructure user A's elementId and user B's elementId from POST body
     const { elementIdA, elementIdB } = req.body;
-
+    console.log(elementIdA, elementIdB, 'are the two ids');
     // delete all relationships of any type between A and B
     const removedRelationships = await driver.executeQuery(
       'MATCH (a:User WHERE elementId(a)=$elementIdA)-[r]-(b:User WHERE elementId(b)=$elementIdB) DELETE r RETURN r',

@@ -10,7 +10,6 @@ const Test = () => {
     //   <p>is this centered?</p>
     // </div>
     <div className="border-solid border-2 border-sky-500">
-      hi my name is supreet?
       <div className="flex items-center justify-center border border-white">
         <div className="alert alert-success">
           Hello, {name}, your enneagram type is {enneagramType}

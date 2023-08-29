@@ -13,7 +13,7 @@ import { EnneagramType, UserId } from './types';
 import userStore from './stores/userStore';
 
 const App = () => {
-  const userId: UserId = userStore.use.id();
+  const userId: UserId = userStore.use.elementId();
   // * use to selectively color the UI depending on the user's type
   const userType: EnneagramType = userStore.use.enneagramType();
   const setUserState = userStore.use.setUserState();

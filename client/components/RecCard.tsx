@@ -6,6 +6,7 @@ import recsStore from '../stores/recsStore';
 import userStore from '../stores/userStore';
 import { mapToJSON } from '../data/utils';
 import EnneagramBadge from './EnneagramBadge';
+import axios from 'axios';
 
 const RecCard = (rec: User) => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const RecCard = (rec: User) => {
   // user state
   const user = userStore.use.name();
   const userType = userStore.use.enneagramType();
-  const userId = userStore.use.id();
+  const userId = userStore.use.elementId();
   // recs state
   const recs: User[] = recsStore.use.recs();
   const setRecs = recsStore.use.setRecs();
@@ -26,26 +27,22 @@ const RecCard = (rec: User) => {
   // declare a function to handleSwipe
   // ! WIP
   const handleSwipe = async (swipe: Swipe, swipedUserId: UserId) => {
+    // determine which api route to hit
+    const route = swipe === 'like' ? '/api/likes' : '/api/dislikes';
+    // ! don't need to save swipes to state at this time since a caching solution will forego batching from FE
     // add the current swipe to state
-    const updatedSwipes = new Map(swipes);
-    // ! at this point, need to discuss with Upasana how the BE is expecting the data to look regarding setting relationships
-    // ? if the route is something like /swipes/:userId, this should work for batch processing / single processing
-    // ? since the BE will get the user's ID from the params, and the swipee's ID(s) from the req.body
-    updatedSwipes.set(swipedUserId!, swipe);
-    // updatedSwipes.set({ swiper: userId, swipee: swipedUserId }, swipe);
-    // state will not actually be updated until this execution context closes, so will need to pass updatedSwipes to the mapToJSON below, not swipes
-    updateSwipes(updatedSwipes);
-    // ? ping DB to update relationship accordingly -- better option would be to update the DB in batches, rather than on every swipe to increase performance and UX
-    // ! what number is best here for batch size? is batching even worth it for MVP? If no, then all this logic is emptied out and we don't even need to store swipes in state
-    // ! and we simple ping the DB on each swipe --- could also implement server-side caching of swipes to batch update the DB with all swipes every X minutes or something?
-    // ! in which case this API would simple ping the route that updates the cache on the server; this might be the best option
-    if (updatedSwipes.size === 2) {
-      const swipesBatch = mapToJSON(updatedSwipes);
-      console.log('Swipes Batch send to DB --->', swipesBatch);
-      // TODO: then ping the DB with the batch -- will need to talk to Upasana about if it's feasible to do it this way in Neo4j
-      // after the response, clear the swipes state
-      clearSwipes();
-    }
+    // const updatedSwipes = new Map(swipes);
+    // updatedSwipes.set(swipedUserId!, swipe);
+    // updateSwipes(updatedSwipes);
+    // const swipesBatch = mapToJSON(updatedSwipes);
+    // console.log('Swipes Batch send to DB --->', swipesBatch);
+    const body = {
+      elementIdA: '4:6d64226f-c501-485b-83e7-69790240b0ea:0',
+      elementIdB: '4:6d64226f-c501-485b-83e7-69790240b0ea:4' || swipedUserId,
+    };
+    const swipeResponse = await axios.post(route, body);
+    // after the response, clear the swipes state
+    // clearSwipes();
     // then update the recs state so the next recommendation renders for the user
     const updatedRecsState = [...recs];
     updatedRecsState.pop();
