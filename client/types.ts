@@ -1,17 +1,34 @@
-export type EnneagramType = string | null;
+export type EnneagramType = string;
+export type UserLocation = [long: number, lat: number];
 
-export type UserId = string | null;
+export type UserId = string;
 export type RecId = string;
 
-export interface User {
-  id: UserId;
+export interface RecommendedUser {
+  elementId: UserId;
   enneagramType: EnneagramType;
   name: string;
   age: number;
-  imgUrl: string[]; // S3 url
+  imgUrl: string[]; // array of S3 urls
 }
 
-export type RecsMap = Map<UserId, User>;
+export interface ActiveUser {
+  elementId: UserId | null;
+  enneagramType: EnneagramType | null;
+  name: string | null;
+  age: number | null;
+  imgUrl: string[] | null; // array of S3 urls
+  gender: string | null;
+  seekGender: string | null;
+  birthday: string | null;
+  seekAgeRange: number[] | null;
+  seekRadius: number | null;
+  location: UserLocation | null;
+  seekRelationship: string | null;
+  email: string | null;
+}
+
+// export type RecsMap = Map<UserId, User>;
 export type Swipe = 'like' | 'dislike';
 export type SwipeCache = Map<RecId, Swipe>;
 // export type SwipeCache = Map<SwipeRelationship, Swipe>;
@@ -19,7 +36,7 @@ export type SwipeCache = Map<RecId, Swipe>;
 //   [key: UserId]: Swipe
 // }
 
-type SwipeRelationship = {
-  swiper: UserId;
-  swipee: UserId;
-};
+// type SwipeRelationship = {
+//   swiper: UserId;
+//   swipee: UserId;
+// };

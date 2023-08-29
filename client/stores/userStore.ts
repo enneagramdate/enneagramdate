@@ -1,13 +1,28 @@
 import { create } from 'zustand';
 import { createSelectors } from './utils';
-import { EnneagramType, User, UserId, SwipeCache } from '../types';
+import {
+  EnneagramType,
+  UserId,
+  SwipeCache,
+  UserLocation,
+  ActiveUser,
+} from '../types';
 
 export interface UserState {
+  // userInfo: ActiveUser
   elementId: UserId | null;
   enneagramType: EnneagramType | null;
   name: string | null;
   age: number | null;
   imgUrl: string[] | null;
+  gender: string | null;
+  seekGender: string | null;
+  birthday: string | null;
+  seekAgeRange: number[] | null;
+  seekRadius: number | null;
+  location: UserLocation | null;
+  seekRelationship: string | null;
+  email: string | null;
   swipes: SwipeCache;
   updateSwipes: (updatedCache: SwipeCache) => void;
   clearSwipes: () => void;
@@ -27,6 +42,14 @@ const userStoreBase = create<UserState>()((set) => ({
   name: null,
   age: null,
   imgUrl: null,
+  gender: null,
+  seekGender: null,
+  birthday: null,
+  seekAgeRange: null,
+  seekRadius: null,
+  location: null,
+  seekRelationship: null,
+  email: null,
   setUserState: (
     id: UserId,
     enneagramType: EnneagramType,

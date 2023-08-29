@@ -42,6 +42,10 @@ apiRouter.get('/users', apiController.getAllUsers, (req, res) => {
   res.status(200).json(res.locals);
 });
 
+apiRouter.get('/users/info', apiController.getAllUserInfo, (req, res) => {
+  res.status(200).json(res.locals.userInfo);
+});
+
 apiRouter.get(
   '/relationships',
   apiController.getAllRelationships,

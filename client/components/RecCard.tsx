@@ -1,28 +1,26 @@
 import React from 'react';
 import { HiCheck, HiXMark } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
-import { User, Swipe, UserId, SwipeCache } from '../types';
+import { RecommendedUser, Swipe, UserId, SwipeCache } from '../types';
 import recsStore from '../stores/recsStore';
 import userStore from '../stores/userStore';
-import { mapToJSON } from '../data/utils';
+// import { mapToJSON } from '../data/utils';
 import EnneagramBadge from './EnneagramBadge';
 import axios from 'axios';
 
-const RecCard = (rec: User) => {
+const RecCard = (rec: RecommendedUser) => {
   const navigate = useNavigate();
   // destructure user information from props
-  const { id, enneagramType, name, age, imgUrl } = rec;
+  const { elementId, enneagramType, name, age, imgUrl } = rec;
   // import state as needed
-  // user state
-  const user = userStore.use.name();
-  const userType = userStore.use.enneagramType();
+  // user state - just need the user's elementId for handleSwipe
   const userId = userStore.use.elementId();
   // recs state
-  const recs: User[] = recsStore.use.recs();
+  const recs: RecommendedUser[] = recsStore.use.recs();
   const setRecs = recsStore.use.setRecs();
-  const swipes: SwipeCache = userStore.use.swipes();
-  const updateSwipes = userStore.use.updateSwipes();
-  const clearSwipes = userStore.use.clearSwipes();
+  // const swipes: SwipeCache = userStore.use.swipes();
+  // const updateSwipes = userStore.use.updateSwipes();
+  // const clearSwipes = userStore.use.clearSwipes();
 
   // declare a function to handleSwipe
   // ! WIP
@@ -37,11 +35,11 @@ const RecCard = (rec: User) => {
     // const swipesBatch = mapToJSON(updatedSwipes);
     // console.log('Swipes Batch send to DB --->', swipesBatch);
     const body = {
-      elementIdA: '4:6d64226f-c501-485b-83e7-69790240b0ea:0',
-      elementIdB: '4:6d64226f-c501-485b-83e7-69790240b0ea:4' || swipedUserId,
+      elementIdA: userId,
+      elementIdB: swipedUserId,
     };
     const swipeResponse = await axios.post(route, body);
-    // after the response, clear the swipes state
+    // ! after the response, clear the swipes state (can delete all this if swipe state is made unnecessary)
     // clearSwipes();
     // then update the recs state so the next recommendation renders for the user
     const updatedRecsState = [...recs];
@@ -60,12 +58,6 @@ const RecCard = (rec: User) => {
   return (
     <div className="card-container">
       <div className="card w-96 bg-primary text-primary-content">
-        {/* <div className="alert alert-success">
-        Hello, {user}, your enneagram type is {userType}
-      </div>
-      <button className="btn btn-info" onClick={() => navigate('/')}>
-        Click to go to back
-      </button> */}
         <div className="h-8 bg-primary"></div>
         <div className="h-96 carousel carousel-vertical">{images}</div>
         <div className="card-body">
@@ -80,13 +72,13 @@ const RecCard = (rec: User) => {
           <div className="card-actions flex flex-center space-x-48">
             <button
               className="btn btn-error btn-circle justify-left"
-              onClick={() => handleSwipe('dislike', id)}
+              onClick={() => handleSwipe('dislike', elementId)}
             >
               <HiXMark />
             </button>
             <button
               className="btn btn-success btn-circle justify-right"
-              onClick={() => handleSwipe('like', id)}
+              onClick={() => handleSwipe('like', elementId)}
             >
               <HiCheck />
             </button>

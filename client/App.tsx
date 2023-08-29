@@ -13,9 +13,9 @@ import { EnneagramType, UserId } from './types';
 import userStore from './stores/userStore';
 
 const App = () => {
-  const userId: UserId = userStore.use.elementId();
+  const userId: UserId | null = userStore.use.elementId();
   // * use to selectively color the UI depending on the user's type
-  const userType: EnneagramType = userStore.use.enneagramType();
+  const userType: EnneagramType | null = userStore.use.enneagramType();
   const setUserState = userStore.use.setUserState();
   // console.log('if userId is null, this is true', userId === null);
   setUserState('1', '5', 'Jeff', 25, ['fake1.png', 'fake2.png', 'fake3.png']);
@@ -30,6 +30,7 @@ const App = () => {
             path="/test"
             element={userId ? <Test /> : <Navigate to="/" />}
           />
+          // * protect this route when we have fullstack auth
           <Route path="/recs" element={<Recs />} />
         </Routes>
       </Router>

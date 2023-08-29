@@ -355,7 +355,6 @@ apiController.getAllUsers = async (req, res, next) => {
     });
 
     await driver.close();
-
     res.locals.allUserNodes = allUserNodes;
     return next();
   } catch (err) {
@@ -426,6 +425,45 @@ apiController.deleteDB = async (req, res, next) => {
   } catch (err) {
     return next({
       log: `deleteDB connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err,
+      },
+    });
+  }
+};
+
+apiController.getAllUserInfo = async (req, res, next) => {
+  console.log('here');
+  try {
+    const driver = neo4j.driver(
+      process.env.NEO4J_URI,
+      neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
+    );
+
+    const serverInfo = await driver.getServerInfo();
+    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+
+    const allUserNodes = await driver.executeQuery('MATCH (n:User) RETURN n', {
+      database: 'neo4j',
+    });
+
+    await driver.close();
+    const userInfo = [];
+    for (const node of allUserNodes.records) {
+      userInfo.push(
+        {
+          properties: node._fields[0].properties,
+          elementId: node._fields[0].elementId,
+        },
+        '.............NEXT USER..............'
+      );
+    }
+    res.locals.userInfo = userInfo;
+    return next();
+  } catch (err) {
+    return next({
+      log: `getAllUsers connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
         err,

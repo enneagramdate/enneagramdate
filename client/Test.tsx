@@ -6,9 +6,6 @@ const Test = () => {
   const name = userStore.use.name();
 
   return (
-    // <div className="flex items-center justify-center">
-    //   <p>is this centered?</p>
-    // </div>
     <div className="border-solid border-2 border-sky-500">
       <div className="flex items-center justify-center border border-white">
         <div className="alert alert-success">

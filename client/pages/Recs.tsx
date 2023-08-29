@@ -11,14 +11,13 @@ Challenges:
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import recsStore from '../stores/recsStore';
-import { EnneagramType, User, UserId } from '../types';
-// import RecCard from './RecCard';
+import { EnneagramType, RecommendedUser, UserId } from '../types';
 import fakeUsers from '../data/fakeUserData';
 import RecCard from '../components/RecCard';
 
 const Recs = () => {
   // import state
-  const recs: User[] = recsStore.use.recs();
+  const recs: RecommendedUser[] = recsStore.use.recs();
   const setRecs = recsStore.use.setRecs();
 
   // ! TESTING FUNCTIONS
@@ -41,22 +40,20 @@ const Recs = () => {
     }
   };
 
-  // TODO: map over the recs and render a RecCard for each
+  // map over the recs state and return a RecCard for each rec
   const recCards = recs.map((person) => {
     return (
       <RecCard
-        id={person.id}
+        elementId={person.elementId}
         enneagramType={person.enneagramType}
         name={person.name}
         age={person.age}
         imgUrl={person.imgUrl}
-        key={person.id}
+        key={person.elementId}
       />
     );
   });
-  // console.log(recCards);
-  // TODO: this component should render one RecCard at a time, populating RecCards from the recs state
-  // * for better Time Complexity, render the final RecCard and make the function to like/dislike pop set state to be recs - the last element
+  // render the last recCard from the recs state (a stack); this is because handleSwipe (see RecCard.tsx) will pop the top rec off the stack and set the state
   return (
     <div className="flex flex-center justify-center align-center">
       {recCards[recCards.length - 1]}

@@ -1,10 +1,10 @@
-import { User } from '../types';
+import { RecommendedUser } from '../types';
 
-const usersArr: User[] = [];
+const usersArr: RecommendedUser[] = [];
 
 for (let i = 1; i < 10; i += 1) {
   usersArr.push({
-    id: i.toString(),
+    elementId: i.toString(),
     enneagramType: i.toString(),
     name: `George #${i}`,
     age: 20 + i,
