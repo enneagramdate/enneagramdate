@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavBar from './components/Navbar';
 import axios from 'axios';
 
 const generateFakeUsers = (index: number) => {
@@ -53,6 +54,7 @@ const FakeHome = () => {
       <button className="btn btn-info" onClick={handleClick}>
         Click to generate fake users
       </button>
+      <NavBar />
     </>
   );
 };
