@@ -31,6 +31,7 @@ export interface ActiveUser {
 // export type RecsMap = Map<UserId, User>;
 export type Swipe = 'like' | 'dislike';
 export type SwipeCache = Map<RecId, Swipe>;
+export type Matches = Set<RecommendedUser>;
 // export type SwipeCache = Map<SwipeRelationship, Swipe>;
 // export interface SwipeCache {
 //   [key: UserId]: Swipe
