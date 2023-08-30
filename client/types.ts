@@ -32,6 +32,13 @@ export interface ActiveUser {
 export type Swipe = 'like' | 'dislike';
 export type SwipeCache = Map<RecId, Swipe>;
 export type Matches = Set<RecommendedUser>;
+export type Message = {
+  message: string;
+  time: string;
+  sender: UserId;
+};
+export type ChatLog = Message[];
+export type MatchChats = Map<UserId, ChatLog>;
 // export type SwipeCache = Map<SwipeRelationship, Swipe>;
 // export interface SwipeCache {
 //   [key: UserId]: Swipe
