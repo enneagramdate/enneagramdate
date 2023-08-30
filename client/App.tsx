@@ -11,6 +11,7 @@ import FakeHome from './FakeHome';
 import Recs from './pages/Recs';
 import { EnneagramType, UserId } from './types';
 import userStore from './stores/userStore';
+import MatchList from './MatchList';
 
 const App = () => {
   const userId: UserId | null = userStore.use.elementId();
@@ -32,6 +33,7 @@ const App = () => {
           />
           // * protect this route when we have fullstack auth
           <Route path="/recs" element={<Recs />} />
+          <Route path="/matches" element={<MatchList />} />
         </Routes>
       </Router>
     </>

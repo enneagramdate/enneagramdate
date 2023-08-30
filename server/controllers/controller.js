@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import neo4j from 'neo4j-driver';
+import { hash, compare } from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { dictionary, getAge } from '../utils.js';
 import { point } from '@turf/helpers';
 import distance from '@turf/distance';
@@ -36,11 +38,32 @@ apiController.createNewUserNode = async (req, res, next) => {
       seekRadius,
     } = req.body;
 
-    const newUserNode = await driver.executeQuery(
-      'MERGE (u:User {email: $email}) ON CREATE SET u.password=$password, u.fullName=$fullName, u.enneagramType=$enneagramType, u.birthday=$birthday, u.seekAgeRange=$seekAgeRange, u.gender=$gender, u.seekGender=$seekGender, u.seekRelationship=$seekRelationship, u.location=$location, u.seekRadius=$seekRadius RETURN u',
+    // if a User with a matching email already exists, throw an Error
+    const existingUser = await driver.executeQuery(
+      'MATCH (u:User WHERE u.email=$email) RETURN u',
       {
         email,
-        password,
+      },
+      { database: 'neo4j' }
+    );
+
+    if (existingUser.records[0]) {
+      throw new Error(
+        'A new user was not created because a user with this email already exists.'
+      );
+    }
+
+    // if not, hash the provided password
+    const hashedPassword = await hash(
+      password,
+      Number(process.env.SALT_ROUNDS)
+    );
+
+    const newUserNode = await driver.executeQuery(
+      'MERGE (u:User {email: $email}) ON CREATE SET u.password=$hashedPassword, u.fullName=$fullName, u.enneagramType=$enneagramType, u.birthday=$birthday, u.seekAgeRange=$seekAgeRange, u.gender=$gender, u.seekGender=$seekGender, u.seekRelationship=$seekRelationship, u.location=$location, u.seekRadius=$seekRadius RETURN u',
+      {
+        email,
+        hashedPassword,
         fullName,
         enneagramType,
         birthday,
@@ -57,20 +80,23 @@ apiController.createNewUserNode = async (req, res, next) => {
     // close driver to free allocated resources
     await driver.close();
 
-    res.locals.newUserNode = newUserNode;
+    // persist the User node and signed JWT for the session
+    res.locals.user = newUserNode;
+    res.locals.token = jwt.sign(
+      newUserNode.records[0]._fields[0].elementId,
+      process.env.JWT_SECRET
+    );
     return next();
   } catch (err) {
     return next({
       log: `createNewUserNode connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
-        err,
+        err: err.message,
       },
     });
   }
 };
-
-// Add controller for User A to be able to edit their profile information (replace images, change preferences, etc.)
 
 // For the new User node, create RECOMMENDED_FOR relationships with all other compatible partners in DB
 
@@ -99,7 +125,7 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
       seekRelationship,
       location,
       seekRadius,
-    } = res.locals.newUserNode.records[0]._fields[0].properties;
+    } = res.locals.user.records[0]._fields[0].properties;
 
     // store all existing Users that are NOT the newly created User
     let allOtherUsers = await driver.executeQuery(
@@ -174,7 +200,62 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
       log: `createNewUserRecommendations connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
-        err,
+        err: err.message,
+      },
+    });
+  }
+};
+
+// Use login credentials to verify if User exists or not
+
+apiController.verifyUserExists = async (req, res, next) => {
+  try {
+    const driver = neo4j.driver(
+      process.env.NEO4J_URI,
+      neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
+    );
+
+    const serverInfo = await driver.getServerInfo();
+    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+
+    const { email, password } = req.body;
+
+    const existingUser = await driver.executeQuery(
+      'MATCH (u:User WHERE u.email=$email) RETURN u',
+      {
+        email,
+      },
+      { database: 'neo4j' }
+    );
+
+    await driver.close();
+
+    // if a User with a matching email exists AND the provided password matches saved / hashed password
+    if (
+      existingUser.records[0] &&
+      (await compare(
+        password,
+        existingUser.records[0]._fields[0].properties.password
+      ))
+    ) {
+      // persist the User node and signed JWT for the session
+      res.locals.user = existingUser;
+      res.locals.token = jwt.sign(
+        existingUser.records[0]._fields[0].elementId,
+        process.env.JWT_SECRET
+      );
+      return next();
+    }
+    // if no matching User exists OR the provided pw does not matched saved pw, throw an Error
+    else {
+      throw new Error('Invalid email or password.');
+    }
+  } catch (err) {
+    return next({
+      log: `verifyUserExists connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err: err.message,
       },
     });
   }
@@ -192,16 +273,8 @@ apiController.sendLatestRelationships = async (req, res, next) => {
     const serverInfo = await driver.getServerInfo();
     console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
 
-    let userElId;
-    // Signup case: get new user's elementId from res.locals
-    // Login case: destructure user's elementId from POST body (safer to store elementId on FE than user's email)
-    // Refer to Express doc: https://expressjs.com/en/guide/routing.html. Route parameters must be made up of “word characters” ([A-Za-z0-9_]), so passing elementIds or emails as params won't work.
-    if (res.locals.newUserNode) {
-      userElId = res.locals.newUserNode.records[0]._fields[0].elementId;
-    } else {
-      const { userId } = req.body;
-      userElId = userId;
-    }
+    // store the User node's elementId
+    const userElId = res.locals.user.records[0]._fields[0].elementId;
 
     // store all users that are recommended for, like, or matched with User A
     const latestRelationships = await driver.executeQuery(
@@ -221,11 +294,13 @@ apiController.sendLatestRelationships = async (req, res, next) => {
       log: `sendLatestRelationships connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
-        err,
+        err: err.message,
       },
     });
   }
 };
+
+// User A edits their profile information (replace images, change preferences, etc.)
 
 // User A LIKES User B
 
@@ -291,7 +366,7 @@ apiController.createLikesOrMatch = async (req, res, next) => {
       log: `createLikesOrMatch connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
-        err,
+        err: err.message,
       },
     });
   }
@@ -330,7 +405,7 @@ apiController.removeRelationships = async (req, res, next) => {
       log: `removeRelationships connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
-        err,
+        err: err.message,
       },
     });
   }
@@ -360,7 +435,7 @@ apiController.getAllUsers = async (req, res, next) => {
       log: `getAllUsers connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
-        err,
+        err: err.message,
       },
     });
   }
@@ -392,7 +467,7 @@ apiController.getAllRelationships = async (req, res, next) => {
       log: `getAllRelationships connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
-        err,
+        err: err.message,
       },
     });
   }
@@ -425,7 +500,7 @@ apiController.deleteDB = async (req, res, next) => {
       log: `deleteDB connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
-        err,
+        err: err.message,
       },
     });
   }
