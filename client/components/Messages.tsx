@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import matchesStore from '../stores/matchesStore';
 import { ChatLog, MatchChats, Message, UserId } from '../types';
-import { Socket, io } from 'socket.io-client';
+import { Socket, SocketOptions, io } from 'socket.io-client';
 
 // TODO: when a match is made, set to the chats global state MatchedUserId => []
 
@@ -32,6 +32,6 @@ const Messages = ({
       setMatchChats(allChatsClone);
     });
     // remove the event listener on component unmount
-    return socket.off('receive_message');
+    socket.off('receive_message');
   }, [socket]);
 };
