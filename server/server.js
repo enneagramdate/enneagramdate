@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
+import http from 'node:http';
+import { Server } from 'socket.io';
 
 // import router
 import apiRouter from './routes/api.js';
@@ -9,6 +11,21 @@ const PORT = process.env.PORT || 3000;
 
 // create express server instance
 const app = express();
+
+// Socket.io
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:9999',
+    methods: ['GET', 'POST'],
+  },
+});
+
+io.on('connection', (socket) => {
+  console.log(`User connected ${socket.id}`);
+
+  // ? insert socket event listeners here
+});
 
 // handle parsing request body
 app.use(express.json());
