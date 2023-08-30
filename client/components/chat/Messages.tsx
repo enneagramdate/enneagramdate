@@ -17,15 +17,23 @@ const Messages = ({
   const allChats: MatchChats = matchesStore.use.chats();
   const setMatchChats = matchesStore.use.setMatchChats();
   const userChat: ChatLog = allChats.get(matchedUserId)!;
-
+  useEffect(() => {
+    console.log('Messages Component mounted');
+    console.log(userChat);
+  });
   // runs whenever a socket event is received from the server
   useEffect(() => {
     socket.on('receive_message', (msg: Message) => {
       // when we receive a message
       console.log(msg);
       // update chats state to append the new message
-      let chatsClone = [...userChat!];
-      if (!chatsClone) chatsClone = [];
+      /* 
+      TODO: must make sure that an empty array is set in the chats state on matchesStore
+      TODO: at the key of matchedUserId when a match is established so userChat will
+      TODO: always be an array even if its an empty one
+      */
+      // const chatsClone = [...userChat!] || [];
+      const chatsClone: ChatLog = [];
       chatsClone!.push(msg);
       // then set the global chats state
       const allChatsClone = new Map(allChats);
@@ -33,13 +41,14 @@ const Messages = ({
       setMatchChats(allChatsClone);
     });
     // remove the event listener on component unmount
-    socket.off('receive_message');
+    // socket.off('receive_message');
   }, [socket]);
 
   // return a message component
   return (
     <div>
-      <div>{'hello'}</div>
+      {/* <div>{'hello'}</div> */}
+      <div>{userChat ? userChat[0].message : 'nothing'}</div>
     </div>
   );
 };
