@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
-import useUserStore from './userStore';
-import { EnneagramType } from './userStore';
+import React from 'react';
+import userStore from './stores/userStore';
 
 const Test = () => {
-  const userType: EnneagramType | null = useUserStore(
-    (state) => state.userType
-  );
+  const enneagramType = userStore.use.enneagramType();
+  const name = userStore.use.name();
+
   return (
-    <>
-      <h1>Hello, your enneagram type is {userType}</h1>
-    </>
+    <div className="border-solid border-2 border-sky-500">
+      <div className="flex items-center justify-center border border-white">
+        <div className="alert alert-success">
+          Hello, {name}, your enneagram type is {enneagramType}
+        </div>
+      </div>
+    </div>
   );
 };
 

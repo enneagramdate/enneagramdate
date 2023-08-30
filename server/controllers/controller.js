@@ -11,6 +11,7 @@ const apiController = {};
 // Create a new User node
 
 apiController.createNewUserNode = async (req, res, next) => {
+  console.log(req.body, '******');
   try {
     // creating a driver instance provides info on how to access the DB; connection is deferred to when the first query is executed
     const driver = neo4j.driver(
@@ -140,7 +141,7 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
     );
 
     // get User A's Set of compatible types
-    const compatibleTypesForA = dictionary.get(enneagramType);
+    const compatibleTypesForA = dictionary.get(Number(enneagramType));
     // get User A's age
     const userAAge = getAge(birthday);
     // get User A's geolocation
@@ -155,7 +156,6 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
       const distanceAToB = distance(userALocation, userBLocation, {
         units: 'miles',
       });
-
       // do compatibility checks between A and B (and vice versa) to ensure mutual compatibility before creating mutual RECOMMENDED_FORs
       if (
         // check B's enneagramType is in A's compatible types Set
@@ -326,7 +326,6 @@ apiController.createLikesOrMatch = async (req, res, next) => {
       },
       { database: 'neo4j' }
     );
-
     // if B LIKES A
     if (BtoARelationship.records[0]._fields[0] === 'LIKES') {
       // delete B to A LIKES relationship
@@ -387,7 +386,6 @@ apiController.removeRelationships = async (req, res, next) => {
 
     // destructure user A's elementId and user B's elementId from POST body
     const { elementIdA, elementIdB } = req.body;
-
     // delete all relationships of any type between A and B
     const removedRelationships = await driver.executeQuery(
       'MATCH (a:User WHERE elementId(a)=$elementIdA)-[r]-(b:User WHERE elementId(b)=$elementIdB) DELETE r RETURN r',
@@ -430,7 +428,6 @@ apiController.getAllUsers = async (req, res, next) => {
     });
 
     await driver.close();
-
     res.locals.allUserNodes = allUserNodes;
     return next();
   } catch (err) {
@@ -504,6 +501,45 @@ apiController.deleteDB = async (req, res, next) => {
       status: 500,
       message: {
         err: err.message,
+      },
+    });
+  }
+};
+
+apiController.getAllUserInfo = async (req, res, next) => {
+  console.log('here');
+  try {
+    const driver = neo4j.driver(
+      process.env.NEO4J_URI,
+      neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
+    );
+
+    const serverInfo = await driver.getServerInfo();
+    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+
+    const allUserNodes = await driver.executeQuery('MATCH (n:User) RETURN n', {
+      database: 'neo4j',
+    });
+
+    await driver.close();
+    const userInfo = [];
+    for (const node of allUserNodes.records) {
+      userInfo.push(
+        {
+          properties: node._fields[0].properties,
+          elementId: node._fields[0].elementId,
+        },
+        '.............NEXT USER..............'
+      );
+    }
+    res.locals.userInfo = userInfo;
+    return next();
+  } catch (err) {
+    return next({
+      log: `getAllUsers connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err,
       },
     });
   }

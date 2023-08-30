@@ -59,4 +59,9 @@ apiRouter.get('/delete', apiController.deleteDB, (req, res) => {
   res.status(200).json(res.locals);
 });
 
+// TODO: removing testing routes
+apiRouter.get('/users/info', apiController.getAllUserInfo, (req, res) => {
+  res.status(200).json(res.locals.userInfo);
+});
+
 export default apiRouter;
