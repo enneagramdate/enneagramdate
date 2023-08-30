@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import http from 'node:http';
 import { Server } from 'socket.io';
+import cors from 'cors';
 
 // import router
 import apiRouter from './routes/api.js';
@@ -12,24 +13,10 @@ const PORT = process.env.PORT || 3000;
 // create express server instance
 const app = express();
 
-// Socket.io
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:9999',
-    methods: ['GET', 'POST'],
-  },
-});
-
-io.on('connection', (socket) => {
-  console.log(`User connected ${socket.id}`);
-
-  // ? insert socket event listeners here
-});
-
 // handle parsing request body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 // handle requests for static files
 app.use(express.static('./../client'));
@@ -56,7 +43,28 @@ app.use((err, req, res, next) => {
   return res.status(errorObj.status).json(errorObj.message);
 });
 
+// Socket.io
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: ['http://localhost:9999', 'http://localhost:8000'],
+    methods: ['GET', 'POST'],
+  },
+});
+
+io.on('connection', (socket) => {
+  console.log(`User connected ${socket.id}`);
+
+  // ? insert socket event listeners here
+  // send a welcome message to test
+  socket.emit('receive_message', {
+    message: 'Welcome',
+    time: 'NOW',
+    sender: 'CHAT_BOT',
+  });
+});
+
 // express server listening
-app.listen(PORT, () => console.log(`Currently listening on port: ${PORT}`));
+server.listen(PORT, () => console.log(`Currently listening on port: ${PORT}`));
 
 export default app;

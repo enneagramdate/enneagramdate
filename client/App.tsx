@@ -11,7 +11,12 @@ import FakeHome from './FakeHome';
 import Recs from './pages/Recs';
 import { EnneagramType, UserId } from './types';
 import userStore from './stores/userStore';
-import MatchList from './MatchList';
+import MatchList from './pages/MatchList';
+import Chat from './components/Chat';
+import { io } from 'socket.io-client';
+
+// TODO: for production, just can instantiate like const socket = io(), only need this domain for dev mode
+const socket = io('http://localhost:8000/');
 
 const App = () => {
   const userId: UserId | null = userStore.use.elementId();
@@ -34,6 +39,10 @@ const App = () => {
           // * protect this route when we have fullstack auth
           <Route path="/recs" element={<Recs />} />
           <Route path="/matches" element={<MatchList />} />
+          <Route
+            path="/chat"
+            element={<Chat socket={socket} matchedUserId="test" />}
+          />
         </Routes>
       </Router>
     </>
