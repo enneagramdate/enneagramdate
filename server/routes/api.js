@@ -6,13 +6,18 @@ import apiController from '../controllers/controller.js';
 // create router
 const apiRouter = express.Router();
 
-// Login route (native auth with Passport)
+// Login route
 
-apiRouter.post('/login', apiController.sendLatestRelationships, (req, res) => {
-  res.status(200).json(res.locals);
-});
+apiRouter.post(
+  '/',
+  apiController.verifyUserExists,
+  apiController.sendLatestRelationships,
+  (req, res) => {
+    res.status(200).json(res.locals);
+  }
+);
 
-// Signup route (native auth with Passport)
+// Signup route
 
 apiRouter.post(
   '/signup',
@@ -52,6 +57,11 @@ apiRouter.get(
 
 apiRouter.get('/delete', apiController.deleteDB, (req, res) => {
   res.status(200).json(res.locals);
+});
+
+// TODO: removing testing routes
+apiRouter.get('/users/info', apiController.getAllUserInfo, (req, res) => {
+  res.status(200).json(res.locals.userInfo);
 });
 
 export default apiRouter;
