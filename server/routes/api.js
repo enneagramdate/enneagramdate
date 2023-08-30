@@ -6,13 +6,18 @@ import apiController from '../controllers/controller.js';
 // create router
 const apiRouter = express.Router();
 
-// Login route (native auth with Passport)
+// Login route
 
-apiRouter.post('/login', apiController.sendLatestRelationships, (req, res) => {
-  res.status(200).json(res.locals);
-});
+apiRouter.post(
+  '/',
+  apiController.verifyUserExists,
+  apiController.sendLatestRelationships,
+  (req, res) => {
+    res.status(200).json(res.locals);
+  }
+);
 
-// Signup route (native auth with Passport)
+// Signup route
 
 apiRouter.post(
   '/signup',
