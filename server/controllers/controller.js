@@ -11,7 +11,6 @@ const apiController = {};
 // Create a new User node
 
 apiController.createNewUserNode = async (req, res, next) => {
-  console.log(req.body, '******');
   try {
     // creating a driver instance provides info on how to access the DB; connection is deferred to when the first query is executed
     const driver = neo4j.driver(
@@ -300,7 +299,7 @@ apiController.sendLatestRelationships = async (req, res, next) => {
   }
 };
 
-// User A edits their profile information (replace images, change preferences, etc.)
+// STRETCH: User A edits their profile information (replace images, change preferences, etc.)
 
 // User A LIKES User B
 

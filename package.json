@@ -5,8 +5,9 @@
   "main": "index.tsx",
   "type": "module",
   "scripts": {
-    "dev": "webpack-dev-server --open & nodemon server/server.js",
-    "build": "webpack"
+    "dev": "NODE_ENV=development nodemon ./server/server.js & webpack-dev-server --open --hot",
+    "build": "webpack",
+    "backend": "nodemon ./server/server.js"
   },
   "repository": {
     "type": "git",
