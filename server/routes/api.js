@@ -1,4 +1,9 @@
 import express from 'express';
+import multer from 'multer';
+
+// memoryStorage engine stores files in file system memory (i.e. not disk) as Buffer objects; we can access entire files from req.file.buffer
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // import controller
 import apiController from '../controllers/controller.js';
@@ -21,9 +26,13 @@ apiRouter.post(
 
 apiRouter.post(
   '/signup',
-  apiController.createNewUserNode,
-  apiController.createNewUserRecommendations,
-  apiController.sendLatestRelationships,
+  // express doesn't handle multipart form data; here, multer's upload middleware handles media uploads in memory (i.e. does not store on server's file system)
+  // TO-DO: update 'media' to match the property name passed from the FE form (see https://www.youtube.com/watch?v=eQAIojcArRY, 7:15)
+  upload.array('media', 1),
+  apiController.storeUploadedMedia,
+  // apiController.createNewUserNode,
+  // apiController.createNewUserRecommendations,
+  // apiController.sendLatestRelationships,
   (req, res) => {
     res.status(200).json(res.locals);
   }

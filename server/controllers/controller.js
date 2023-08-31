@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import neo4j from 'neo4j-driver';
 import { hash, compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -7,6 +8,44 @@ import { point } from '@turf/helpers';
 import distance from '@turf/distance';
 
 const apiController = {};
+
+// Store user-uploaded images in S3 bucket
+
+apiController.storeUploadedMedia = async (req, res, next) => {
+  try {
+    // req.file contains 'media' files
+    console.log('req --->', req);
+    console.log('req.file --->', req.file);
+    console.log('req.files --->', req.files);
+    const s3 = new S3Client({
+      credentials: {
+        accessKeyId: process.env.ACCESS_KEY,
+        secretAccessKey: process.env.SECRET_ACCESS_KEY,
+      },
+      region: process.env.BUCKET_REGION,
+    });
+    const result = await s3.send(
+      new PutObjectCommand({
+        Bucket: process.env.BUCKET_NAME,
+        Key: req.file.originalname,
+        Body: req.file.buffer,
+        // following tells S3 type of image (i.e. photo, gif, video)
+        ContentType: req.file.mimetype,
+      })
+    );
+    console.log('result --->', result);
+    res.locals.uploadResult = result;
+    return next();
+  } catch (err) {
+    return next({
+      log: `storeUploadedMedia connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err: err.message,
+      },
+    });
+  }
+};
 
 // Create a new User node
 
