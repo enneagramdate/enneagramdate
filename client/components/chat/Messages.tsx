@@ -25,7 +25,7 @@ const Messages = ({
   useEffect(() => {
     socket.on('receive_message', (msg: Message) => {
       // when we receive a message
-      console.log(msg);
+      console.log('here is the receive message', msg);
       // update chats state to append the new message
       /* 
       TODO: must make sure that an empty array is set in the chats state on matchesStore
@@ -44,11 +44,12 @@ const Messages = ({
     // socket.off('receive_message');
   }, [socket]);
 
-  // return a message component
+  // return a message component, which renders a message component for each message
   return (
     <div>
       {/* <div>{'hello'}</div> */}
       <div>{userChat ? userChat[0].message : 'nothing'}</div>
+      <div>{userChat ? userChat[0].sender : 'nothing'}</div>
     </div>
   );
 };

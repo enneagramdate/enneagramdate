@@ -3,9 +3,11 @@ import express from 'express';
 import http from 'node:http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import roomCache from './roomCache.js';
 
 // import router
 import apiRouter from './routes/api.js';
+import { match } from 'node:assert';
 
 // define server port
 const PORT = process.env.PORT || 3000;
@@ -57,14 +59,52 @@ io.on('connection', (socket) => {
 
   // ? insert socket event listeners here
   // send a welcome message to test
-  socket.emit('receive_message', {
-    message: 'Welcome',
-    time: 'NOW',
-    sender: 'CHAT_BOT',
+  // socket.emit('receive_message', {
+  //   message: 'Welcome',
+  //   time: 'NOW',
+  //   sender: 'CHAT_BOT',
+  // });
+  socket.on('join_room', (data) => {
+    const { userId, matchedUserId } = data;
+    // find the room in the rooms cache
+    // if it doesn't exist, create it for userId AND matchedUserId
+    // the room name must be universal, just do it alphabetically
+    let room;
+    const roomName = [userId, matchedUserId].sort((a, b) => a - b);
+    room = roomName[0] + '-' + roomName[1];
+    // console.log(roomName);
+    if (roomCache[userId] && roomCache[userId][matchedUserId]) {
+      room = roomCache[userId][matchedUserId];
+    } else {
+      // create a universal room name for both users
+      roomCache[userId] = {};
+      roomCache[userId][matchedUserId] = room;
+      roomCache[matchedUserId] = {};
+      roomCache[matchedUserId][userId] = room;
+      room = room;
+    }
+    console.log('here is the room cache --->', roomCache);
+    // console.log(room);
+    socket.join(room);
+    let time = Date.now();
+    // socket.to(room).emit('receive_message'),
+    io.to(room).emit('receive_message', {
+      message: `Welcome to room ${room}`,
+      time: time,
+      sender: userId,
+    });
+  });
+
+  io.on('disconnect', () => {
+    socket.leave(room);
+    console.log('a user disconnected');
   });
 });
 
-// express server listening
+io.on('send_message', (data) => {
+  console.log(data);
+});
+// http server listening
 server.listen(PORT, () => console.log(`Currently listening on port: ${PORT}`));
 
 export default app;
