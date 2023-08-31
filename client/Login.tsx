@@ -59,7 +59,7 @@ const Login = () => {
   };
 
   const keyDownHandler: KeyboardEventHandler = (e) => {
-    if (e.code === '13' && !errors.go) {
+    if (e.code === 'Enter' && !errors.go) {
       sender();
     }
   };

@@ -4,7 +4,10 @@ import {
   Route,
   Routes,
   redirect,
+  createBrowserRouter,
+  RouterProvider,
 } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import './app.css';
 import Splash from './Splash';
 import Signup from './Signup';
@@ -20,24 +23,32 @@ const App = () => {
   //const userType: EnneagramType | null = userStore.use.info.enneagramType();
   const setUserState = userStore.use.setUserState();
 
-  const userLoader = async () => {
-    // add cookies
-    // make sure loader works
-    if (userStore.use.elementId() !== null) return;
-    return redirect('/');
-  };
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <Splash />,
+    },
+    {
+      path: '/login',
+      element: <Login />,
+    },
+    {
+      path: '/signup',
+      element: <Signup />,
+    },
+    {
+      path: '/recs',
+      element: <Recs />,
+    },
+    {
+      path: '/matches',
+      element: <MatchList />,
+    },
+  ]);
 
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Splash />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/recs" element={<Recs />} loader={userLoader} />
-          <Route path="/matches" element={<MatchList />} loader={userLoader} />
-        </Routes>
-      </Router>
+      <RouterProvider router={router} />
     </>
   );
 };
