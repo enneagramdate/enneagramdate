@@ -101,8 +101,7 @@ io.on('connection', (socket) => {
     io.in(room).emit('receive_message', data);
   });
 
-  io.on('disconnect', () => {
-    socket.leave(room);
+  socket.on('disconnect', (data) => {
     console.log('a user disconnected');
   });
 });

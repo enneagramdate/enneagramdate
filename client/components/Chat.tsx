@@ -25,10 +25,10 @@ const Chat = ({
 
   useEffect(() => {
     socket.connect();
-    return () => socket.disconnect();
+    return () => socket.disconnect(true);
   });
   useEffect(() => {
-    socket.emit('join_room', { userId: 'fake user id', matchedUserId });
+    socket.emit('join_room', { userId, matchedUserId });
   }, []);
   return (
     <div className="chat-container">
