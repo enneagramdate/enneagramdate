@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Navigate,
+  redirect,
 } from 'react-router-dom';
 import './app.css';
 import Splash from './Splash';
@@ -20,6 +20,11 @@ const App = () => {
   //const userType: EnneagramType | null = userStore.use.info.enneagramType();
   const setUserState = userStore.use.setUserState();
 
+  const userLoader = async () => {
+    if (userStore.use.info().elementId) return;
+    return redirect('/');
+  };
+
   return (
     <>
       <Router>
@@ -27,8 +32,8 @@ const App = () => {
           <Route path="/" element={<Splash />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/recs" element={<Recs />} />
-          <Route path="/matches" element={<MatchList />} />
+          <Route path="/recs" element={<Recs />} loader={userLoader} />
+          <Route path="/matches" element={<MatchList />} loader={userLoader} />
         </Routes>
       </Router>
     </>
