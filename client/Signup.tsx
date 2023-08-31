@@ -1,8 +1,6 @@
 import React, { KeyboardEventHandler, useState } from 'react';
-import { Loader } from '@googlemaps/js-api-loader';
-import useUserStore, { UserState } from './userStore';
+import useUserStore, { UserState } from './stores/userStore';
 import isEmail from 'validator/lib/isEmail';
-import isPostalCode from 'validator/lib/isPostalCode';
 import { useNavigate } from 'react-router-dom';
 
 interface Info {
@@ -15,7 +13,7 @@ interface Info {
   gender: string;
   seekGender: string;
   seekRelationship: string;
-  position: google.maps.LatLng | null;
+  location: string;
   seekRadius: number;
 }
 
@@ -30,7 +28,7 @@ type infoKey =
   | 'gender'
   | 'seekGender'
   | 'seekRelationship'
-  | 'position'
+  | 'location'
   | 'seekRadius';
 
 const defaultInfo: Info = {
@@ -43,49 +41,23 @@ const defaultInfo: Info = {
   gender: '',
   seekGender: '',
   seekRelationship: '',
-  position: null,
+  location: '',
   seekRadius: 0,
 };
 
-const loader = new Loader({
-  apiKey: 'AIzaSyBro2kUXbOjXXxiQqn7bhx1Udcf5Nowx4c',
-  version: 'weekly',
-});
-
 const Signup = () => {
   const user: UserState = useUserStore((state) => state);
+
   const navigate = useNavigate();
 
-  const [date, setDate] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
+  const [image, updateImage] = React.useState(null);
 
   const [info, updateInfo] = useState(defaultInfo);
-
-  const zipToPos = (zip: string) => {
-    loader.importLibrary('geocoding').then((lib) => {
-      const geocoder = new lib.Geocoder();
-      geocoder.geocode({ address: zip }, function (results, status) {
-        if (results && results.length) {
-          const centroid = results[0].geometry.location;
-          const curInfo = { ...info };
-          curInfo.position = centroid;
-          updateInfo(curInfo);
-        } else {
-          const curErr = { ...errors };
-          curErr.position = status;
-          updateErrors(curErr);
-        }
-      });
-    });
-  };
 
   const [errors, updateErrors] = useState({
     email: false,
     go: true,
     zip: false,
-    position: '',
     radius: false,
     lowAge: false,
     highAge: false,
@@ -95,15 +67,15 @@ const Signup = () => {
   const inputHandler = (text: string, type: infoKey) => {
     errorHandler(text, type);
     const curInfo = { ...info };
-    if (type === 'position') {
-      if (!errors.zip) zipToPos(text);
-      return;
-    } else if (type === 'seekAgeRangeLow') {
-      if (!errors.lowAge) curInfo.seekAgeRange[0] = Number(text);
+    if (type === 'seekAgeRangeLow') {
+      curInfo.seekAgeRange[0] = Number(text);
     } else if (type === 'seekAgeRangeHigh') {
-      if (!errors.highAge) curInfo.seekAgeRange[1] = Number(text);
+      curInfo.seekAgeRange[1] = Number(text);
     } else if (type === 'seekRadius') {
-      if (!errors.radius) curInfo.seekRadius = Number(text);
+      curInfo.seekRadius = Number(text);
+    } else if (type === 'location') {
+      const addArray = text.split(' ');
+      curInfo.location = addArray.join('%20');
     } else curInfo[type] = text;
     updateInfo(curInfo);
   };
@@ -113,15 +85,14 @@ const Signup = () => {
     curErr.alert = '';
     if (type === 'email') {
       curErr.email = !isEmail(text);
-    } else if (type === 'position') {
-      curErr.zip = !isPostalCode(text, 'US');
     } else if (type === 'seekAgeRangeLow') {
-      curErr.lowAge =
-        !Number(text) ||
-        Number(text) < 18 ||
-        Number(text) > info.seekAgeRange[1];
+      const age = Number(text);
+      curErr.lowAge = !age || age < 18 || age > info.seekAgeRange[1];
+      curErr.highAge = info.seekAgeRange[1] < age;
     } else if (type === 'seekAgeRangeHigh') {
-      curErr.highAge = !Number(text) || Number(text) < info.seekAgeRange[0];
+      const age = Number(text);
+      curErr.lowAge = info.seekAgeRange[0] < 18 || info.seekAgeRange[0] > age;
+      curErr.highAge = !age || age < info.seekAgeRange[0];
     } else if (type === 'seekRadius') {
       curErr.radius = Number(text) < 1;
     }
@@ -135,23 +106,50 @@ const Signup = () => {
         break;
       }
     }
-    if (curErr.email) curErr.go = true;
+    if (
+      curErr.email ||
+      curErr.radius ||
+      curErr.zip ||
+      curErr.highAge ||
+      curErr.lowAge
+    )
+      curErr.go = true;
     updateErrors(curErr);
   };
 
   const sender = async () => {
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'Application/JSON',
-      },
-      body: JSON.stringify(info),
-    });
-    const parseRes = await res.json();
-    if (res.ok) {
-      user.setUserState(parseRes);
-      navigate('/main');
-    } else updateErrors({ ...errors, alert: parseRes });
+    if (image) {
+      const formData = new FormData();
+      if (image) formData.append('image', image);
+      for (const [key, val] of Object.entries(info)) {
+        formData.append(key, val);
+      }
+      const res = await fetch('/api/signup/', {
+        method: 'POST',
+        body: formData,
+      });
+      const parseRes = await res.json();
+      if (res.ok) {
+        // deconstruct user object
+
+        // user.setUserState(parseRes);
+        navigate('/recs');
+      } else updateErrors({ ...errors, alert: parseRes });
+    } else {
+      const res = await fetch('/api/signup/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'Application/JSON',
+        },
+        body: JSON.stringify(info),
+      });
+      const parseRes = await res.json();
+      if (res.ok) {
+        //const latestRel = parseRes.latestRelationships.records;
+        user.setUserState(parseRes.user.records[0]._fields[0].properties);
+        navigate('/recs');
+      } else updateErrors({ ...errors, alert: parseRes.err });
+    }
   };
 
   const keyDownHandler: KeyboardEventHandler = (e) => {
@@ -197,10 +195,12 @@ const Signup = () => {
           <span>Enneagram Type</span>
           <select
             className="select select-bordered w-full max-w-xs"
+            defaultValue="1-9"
             onChange={(event) =>
               inputHandler(event.target.value, 'enneagramType')
             }
           >
+            <option disabled>1-9</option>
             <option>1</option>
             <option>2</option>
             <option>3</option>
@@ -221,21 +221,23 @@ const Signup = () => {
           />
         </label>
         <label className="input-group">
-          <span>Zip Code</span>
+          <span>Address</span>
           <input
             type="text"
             className={`input input-bordered ${
               errors.zip ? 'input-error' : ''
             }`}
-            onChange={(event) => inputHandler(event.target.value, 'position')}
+            onChange={(event) => inputHandler(event.target.value, 'location')}
           />
         </label>
         <label className="input-group">
-          <span>Gender</span>
+          <span>I am</span>
           <select
             className="select select-bordered w-full max-w-xs"
+            defaultValue="Gender"
             onChange={(event) => inputHandler(event.target.value, 'gender')}
           >
+            <option disabled>Gender</option>
             <option>Female</option>
             <option>Male</option>
             <option>Non-binary</option>
@@ -245,8 +247,10 @@ const Signup = () => {
           <span>Seeking</span>
           <select
             className="select select-bordered w-full max-w-xs"
+            defaultValue="Gender"
             onChange={(event) => inputHandler(event.target.value, 'seekGender')}
           >
+            <option disabled>Gender</option>
             <option>Female</option>
             <option>Male</option>
             <option>Non-binary</option>
@@ -256,10 +260,12 @@ const Signup = () => {
           <span>Seeking</span>
           <select
             className="select select-bordered w-full max-w-xs"
+            defaultValue="Relationship Type"
             onChange={(event) =>
               inputHandler(event.target.value, 'seekRelationship')
             }
           >
+            <option disabled>Relationship Type</option>
             <option>Serious</option>
             <option>Casual</option>
           </select>
@@ -298,6 +304,32 @@ const Signup = () => {
               inputHandler(event.target.value, 'seekAgeRangeHigh')
             }
           />
+        </label>
+        <label htmlFor="upload-photo">
+          <input
+            style={{ display: 'none' }}
+            id="upload-photo"
+            name="upload-photo"
+            type="file"
+            onChange={(event) => {
+              //@ts-expect-error
+              if (event.target.files) updateImage(event.target.files[0]);
+            }}
+          />
+          <span className="btn" aria-label="add">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-camera"
+              viewBox="0 0 16 16"
+            >
+              <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1v6zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2z" />
+              <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z" />
+            </svg>
+            Add a Picture
+          </span>
         </label>
         <button className="btn" disabled={errors.go} onClick={sender}>
           Go!

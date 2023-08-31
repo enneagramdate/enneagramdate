@@ -1,5 +1,5 @@
 import React, { KeyboardEventHandler, useState } from 'react';
-import useUserStore, { UserState } from './userStore';
+import useUserStore, { UserState } from './stores/userStore';
 import isEmail from 'validator/lib/isEmail';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ const Login = () => {
   };
 
   const sender = async () => {
-    const res = await fetch('/api/login', {
+    const res = await fetch('/api/', {
       method: 'POST',
       headers: {
         'Content-Type': 'Application/JSON',
@@ -52,8 +52,8 @@ const Login = () => {
     });
     const parseRes = await res.json();
     if (res.ok) {
-      user.setUserState(parseRes);
-      navigate('/main');
+      user.setUserState(parseRes.user.records[0]._fields[0].properties);
+      navigate('/recs');
     } else updateErrors({ ...errors, alert: parseRes });
   };
 

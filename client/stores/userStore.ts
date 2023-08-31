@@ -8,8 +8,7 @@ import {
   ActiveUser,
 } from '../types';
 
-export interface UserState {
-  // userInfo: ActiveUser
+export interface UserInfo {
   elementId: UserId | null;
   enneagramType: EnneagramType | null;
   name: string | null;
@@ -20,23 +19,21 @@ export interface UserState {
   birthday: string | null;
   seekAgeRange: number[] | null;
   seekRadius: number | null;
-  location: UserLocation | null;
+  lat: number | null;
+  lng: number | null;
   seekRelationship: string | null;
   email: string | null;
+}
+export interface UserState {
+  info: UserInfo;
   swipes: SwipeCache;
   updateSwipes: (updatedCache: SwipeCache) => void;
   clearSwipes: () => void;
-  setUserState: (
-    id: string,
-    type: string,
-    name: string,
-    age: number,
-    imgUrl: string[]
-  ) => void;
+  setUserState: (user: UserInfo) => void;
   clearUserState: () => void;
 }
 
-const userStoreBase = create<UserState>()((set) => ({
+const emptyUser = {
   elementId: null,
   enneagramType: null,
   name: null,
@@ -47,24 +44,23 @@ const userStoreBase = create<UserState>()((set) => ({
   birthday: null,
   seekAgeRange: null,
   seekRadius: null,
-  location: null,
+  lat: null,
+  lng: null,
   seekRelationship: null,
   email: null,
-  setUserState: (
-    id: UserId,
-    enneagramType: EnneagramType,
-    name: string,
-    age: number,
-    imgUrl: string[]
-  ) => set((_state) => ({ id, enneagramType, name, age, imgUrl })),
+};
+const userStoreBase = create<UserState>()((set) => ({
+  info: emptyUser,
+  setUserState: (user: UserInfo) =>
+    set((_state) => {
+      _state.info = user;
+      return _state;
+    }),
   clearUserState: () =>
-    set((_state) => ({
-      id: null,
-      enneagramType: null,
-      name: null,
-      age: null,
-      imgUrl: null,
-    })),
+    set((_state) => {
+      _state.info = emptyUser;
+      return _state;
+    }),
   swipes: new Map(),
   updateSwipes: (updatedCache: SwipeCache) =>
     set((_state) => ({ swipes: updatedCache })),
