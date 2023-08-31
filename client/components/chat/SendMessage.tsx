@@ -16,7 +16,12 @@ const SendMessage = ({
   const sendMessage = () => {
     if (message !== '') {
       const time = Date.now();
-      socket.emit('send_message', { message, time, sender: 'abc', room: room });
+      socket.emit('send_message', {
+        message,
+        time,
+        sender: userId,
+        room: room,
+      });
       setMessage('');
     }
   };

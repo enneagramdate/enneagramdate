@@ -14,9 +14,9 @@ import userStore from './stores/userStore';
 import MatchList from './pages/MatchList';
 import Chat from './components/Chat';
 import { io } from 'socket.io-client';
+import { socket } from './socket';
 
 // TODO: for production, just can instantiate like const socket = io(), only need this domain for dev mode
-var socket = io('http://localhost:8000/');
 
 const App = () => {
   const userId: UserId | null = userStore.use.elementId();

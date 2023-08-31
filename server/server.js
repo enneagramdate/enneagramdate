@@ -69,9 +69,8 @@ io.on('connection', (socket) => {
     // find the room in the rooms cache
     // if it doesn't exist, create it for userId AND matchedUserId
     // the room name must be universal, just do it alphabetically
-    let room;
     const roomName = [userId, matchedUserId].sort((a, b) => a - b);
-    room = roomName[0] + '-' + roomName[1];
+    let room = roomName[0] + '-' + roomName[1];
     // console.log(roomName);
     if (roomCache[userId] && roomCache[userId][matchedUserId]) {
       room = roomCache[userId][matchedUserId];
@@ -83,21 +82,22 @@ io.on('connection', (socket) => {
       roomCache[matchedUserId][userId] = room;
       room = room;
     }
-    console.log('here is the room cache --->', roomCache);
+    // console.log('here is the room cache --->', roomCache);
     // console.log(room);
     socket.join(room);
     let time = Date.now();
     // socket.to(room).emit('receive_message'),
-    io.to(room).emit('receive_message', {
-      message: `Welcome to room ${room}`,
-      time: time,
-      sender: userId,
-      room: room,
-    });
+    // io.to(room).emit('receive_message', {
+    //   message: `Welcome to room ${room}`,
+    //   time: time,
+    //   sender: userId,
+    //   room: room,
+    // });
   });
   socket.on('send_message', (data) => {
-    console.log(data);
+    console.log('send_message listener ---->', data);
     const { message, time, sender, room } = data;
+    socket.join(room);
     io.in(room).emit('receive_message', data);
   });
 

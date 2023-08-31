@@ -11,7 +11,6 @@ import Messages from './chat/Messages';
 import { Socket } from 'socket.io';
 import SendMessage from './chat/SendMessage';
 import userStore from '../stores/userStore';
-import MessagesTest from './chat/Messages.test';
 
 const Chat = ({
   socket,
@@ -24,18 +23,16 @@ const Chat = ({
   const [room, setRoom] = useState('');
 
   useEffect(() => {
-    socket.emit('join_room', { userId: 'fake user id', matchedUserId });
+    socket.connect();
+    return () => socket.disconnect();
   });
+  useEffect(() => {
+    socket.emit('join_room', { userId: 'fake user id', matchedUserId });
+  }, []);
   return (
     <div className="chat-container">
       <div>
-        {/* <Messages
-          socket={socket}
-          matchedUserId={matchedUserId}
-          room={room}
-          setRoom={setRoom}
-        /> */}
-        <MessagesTest
+        <Messages
           socket={socket}
           matchedUserId={matchedUserId}
           room={room}

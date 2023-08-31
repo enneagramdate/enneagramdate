@@ -21,16 +21,19 @@ const Messages = ({
   const allChats: MatchChats = matchesStore.use.chats();
   const setMatchChats = matchesStore.use.setMatchChats();
   const userChat: ChatLog = allChats.get(matchedUserId)!;
-  useEffect(() => {
-    // console.log('Messages Component mounted');
-    // console.log('USERCHAT', userChat);
-  });
+  console.log(userChat);
+  // useEffect(() => {
+  //   socket.connect();
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // });
   // runs whenever a socket event is received from the server
   useEffect(() => {
     socket.on('receive_message', (msg: Message) => {
       // console.log(msg, 'at the top of socket.on');
-      console.log(userChat, 'at the top of socket.on');
-      console.log(allChats, 'at the top of socket.on');
+      // console.log(userChat, 'at the top of socket.on');
+      // console.log(allChats, 'at the top of socket.on');
       // when we receive a message
       // console.log('here is the receive message', msg);
       // update chats state to append the new message
@@ -42,7 +45,7 @@ const Messages = ({
       // const chatsClone = [...userChat!] || [];
       // const chatsClone: ChatLog = userChat || [];
       const chatsClone: ChatLog = userChat !== undefined ? [...userChat] : [];
-      console.log('*', userChat, chatsClone);
+      // console.log('*', userChat, chatsClone);
       chatsClone!.push(msg);
       // then set the global chats state
       const allChatsClone = new Map(allChats);
@@ -52,11 +55,11 @@ const Messages = ({
     });
     // remove the event listener on component unmount
     // socket.off('receive_message');
-  }, [socket]);
+  }, [allChats]);
 
   const messages = userChat
     ? userChat.map((msg, i) => {
-        return <ChatBubble msg={msg.message} key={`msg-${i}`} />;
+        return <ChatBubble messageObj={msg} key={`msg-${i}`} />;
       })
     : 'nothing';
   // return a message component, which renders a message component for each message
