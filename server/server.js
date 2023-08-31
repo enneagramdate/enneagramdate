@@ -92,17 +92,19 @@ io.on('connection', (socket) => {
       message: `Welcome to room ${room}`,
       time: time,
       sender: userId,
+      room: room,
     });
+  });
+  socket.on('send_message', (data) => {
+    console.log(data);
+    const { message, time, sender, room } = data;
+    io.in(room).emit('receive_message', data);
   });
 
   io.on('disconnect', () => {
     socket.leave(room);
     console.log('a user disconnected');
   });
-});
-
-io.on('send_message', (data) => {
-  console.log(data);
 });
 // http server listening
 server.listen(PORT, () => console.log(`Currently listening on port: ${PORT}`));

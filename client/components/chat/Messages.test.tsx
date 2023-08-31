@@ -3,9 +3,10 @@ import matchesStore from '../../stores/matchesStore';
 import { ChatLog, MatchChats, Message, UserId } from '../../types';
 import { Socket } from 'socket.io-client';
 import ChatBubble from './ChatBubble';
+import singleMatchesStore from '../../stores/singleMatchStore';
 // TODO: when a match is made, set to the chats global state MatchedUserId => []
 
-const Messages = ({
+const MessagesTest = ({
   socket,
   matchedUserId,
   room,
@@ -18,19 +19,21 @@ const Messages = ({
 }) => {
   // get the ChatLog for this particular match
   // allChats is a Map of UserId => ChatLog (ChatLog = Message[])
-  const allChats: MatchChats = matchesStore.use.chats();
-  const setMatchChats = matchesStore.use.setMatchChats();
-  const userChat: ChatLog = allChats.get(matchedUserId)!;
+  const chat = singleMatchesStore.use.chat();
+  const setChat = singleMatchesStore.use.setChat();
+
+  // const allChats: MatchChats = matchesStore.use.chats();
+  // const setMatchChats = matchesStore.use.setMatchChats();
+  // const userChat: ChatLog = allChats.get(matchedUserId)!;
   useEffect(() => {
     // console.log('Messages Component mounted');
-    // console.log('USERCHAT', userChat);
+    console.log('chat', chat);
   });
   // runs whenever a socket event is received from the server
   useEffect(() => {
     socket.on('receive_message', (msg: Message) => {
       // console.log(msg, 'at the top of socket.on');
-      console.log(userChat, 'at the top of socket.on');
-      console.log(allChats, 'at the top of socket.on');
+      console.log(chat, 'at the top of socket.on');
       // when we receive a message
       // console.log('here is the receive message', msg);
       // update chats state to append the new message
@@ -41,21 +44,18 @@ const Messages = ({
       */
       // const chatsClone = [...userChat!] || [];
       // const chatsClone: ChatLog = userChat || [];
-      const chatsClone: ChatLog = userChat !== undefined ? [...userChat] : [];
-      console.log('*', userChat, chatsClone);
-      chatsClone!.push(msg);
+      const chatsClone: ChatLog = [...chat];
+      chatsClone.push(msg);
       // then set the global chats state
-      const allChatsClone = new Map(allChats);
-      allChatsClone.set(matchedUserId, chatsClone!);
-      setMatchChats(allChatsClone);
+      setChat(chatsClone);
       setRoom(msg.room);
     });
     // remove the event listener on component unmount
     // socket.off('receive_message');
-  }, [socket]);
+  }, [socket, chat]);
 
-  const messages = userChat
-    ? userChat.map((msg, i) => {
+  const messages = chat
+    ? chat.map((msg, i) => {
         return <ChatBubble msg={msg.message} key={`msg-${i}`} />;
       })
     : 'nothing';
@@ -63,4 +63,4 @@ const Messages = ({
   return <div>{messages}</div>;
 };
 
-export default Messages;
+export default MessagesTest;

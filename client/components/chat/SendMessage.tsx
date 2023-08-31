@@ -2,15 +2,21 @@ import React, { useState } from 'react';
 import userStore from '../../stores/userStore';
 import { Socket } from 'socket.io-client';
 
-const SendMessage = ({ socket }: { socket: Socket }) => {
+const SendMessage = ({
+  socket,
+  room,
+  setRoom,
+}: {
+  socket: Socket;
+  room: string;
+  setRoom: any;
+}) => {
   const userId = userStore.use.elementId();
   const [message, setMessage] = useState('');
   const sendMessage = () => {
     if (message !== '') {
       const time = Date.now();
-      console.log(time);
-      console.log(userId);
-      socket.emit('send_message', { message, time, sender: 'abc' });
+      socket.emit('send_message', { message, time, sender: 'abc', room: room });
       setMessage('');
     }
   };

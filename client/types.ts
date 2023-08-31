@@ -36,6 +36,7 @@ export type Message = {
   message: string;
   time: string;
   sender: UserId;
+  room: string;
 };
 export type ChatLog = Message[];
 export type MatchChats = Map<UserId, ChatLog>;

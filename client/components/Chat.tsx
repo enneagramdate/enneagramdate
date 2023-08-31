@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 /* chat component should render 3 subcomponents 
 - top bar which displays the matches name and photo and maybe type?
@@ -11,6 +11,7 @@ import Messages from './chat/Messages';
 import { Socket } from 'socket.io';
 import SendMessage from './chat/SendMessage';
 import userStore from '../stores/userStore';
+import MessagesTest from './chat/Messages.test';
 
 const Chat = ({
   socket,
@@ -20,6 +21,7 @@ const Chat = ({
   matchedUserId: UserId;
 }) => {
   const userId = userStore.use.elementId();
+  const [room, setRoom] = useState('');
 
   useEffect(() => {
     socket.emit('join_room', { userId: 'fake user id', matchedUserId });
@@ -27,8 +29,19 @@ const Chat = ({
   return (
     <div className="chat-container">
       <div>
-        <Messages socket={socket} matchedUserId={matchedUserId} />
-        <SendMessage socket={socket} />
+        {/* <Messages
+          socket={socket}
+          matchedUserId={matchedUserId}
+          room={room}
+          setRoom={setRoom}
+        /> */}
+        <MessagesTest
+          socket={socket}
+          matchedUserId={matchedUserId}
+          room={room}
+          setRoom={setRoom}
+        />
+        <SendMessage socket={socket} room={room} setRoom={setRoom} />
       </div>
     </div>
   );
