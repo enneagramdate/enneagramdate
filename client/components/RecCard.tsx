@@ -14,7 +14,7 @@ const RecCard = (rec: RecommendedUser) => {
   const { elementId, enneagramType, name, age, imgUrl } = rec;
   // import state as needed
   // user state - just need the user's elementId for handleSwipe
-  const userId = userStore.use.info().elementId;
+  const userId = userStore.use.elementId();
   // recs state
   const recs: RecommendedUser[] = recsStore.use.recs();
   const setRecs = recsStore.use.setRecs();

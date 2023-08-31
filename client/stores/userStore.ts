@@ -9,7 +9,6 @@ import {
 } from '../types';
 
 export interface UserInfo {
-  elementId: UserId | null;
   enneagramType: EnneagramType | null;
   name: string | null;
   age: number | null;
@@ -24,17 +23,18 @@ export interface UserInfo {
   seekRelationship: string | null;
   email: string | null;
 }
+
 export interface UserState {
+  elementId: UserId | null;
   info: UserInfo;
   swipes: SwipeCache;
   updateSwipes: (updatedCache: SwipeCache) => void;
   clearSwipes: () => void;
-  setUserState: (user: UserInfo) => void;
+  setUserState: (user: UserInfo, elementId: UserId) => void;
   clearUserState: () => void;
 }
 
 const emptyUser = {
-  elementId: null,
   enneagramType: null,
   name: null,
   age: null,
@@ -50,15 +50,18 @@ const emptyUser = {
   email: null,
 };
 const userStoreBase = create<UserState>()((set) => ({
+  elementId: null,
   info: emptyUser,
-  setUserState: (user: UserInfo) =>
+  setUserState: (user: UserInfo, elementId: UserId) =>
     set((_state) => {
       _state.info = user;
+      _state.elementId = elementId;
       return _state;
     }),
   clearUserState: () =>
     set((_state) => {
       _state.info = emptyUser;
+      _state.elementId = null;
       return _state;
     }),
   swipes: new Map(),

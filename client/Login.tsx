@@ -52,7 +52,8 @@ const Login = () => {
     });
     const parseRes = await res.json();
     if (res.ok) {
-      user.setUserState(parseRes.user.records[0]._fields[0].properties);
+      const { properties, elementId } = parseRes.user.records[0]._fields[0];
+      user.setUserState(properties, elementId);
       navigate('/recs');
     } else updateErrors({ ...errors, alert: parseRes });
   };

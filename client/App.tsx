@@ -21,7 +21,9 @@ const App = () => {
   const setUserState = userStore.use.setUserState();
 
   const userLoader = async () => {
-    if (userStore.use.info().elementId) return;
+    // add cookies
+    // make sure loader works
+    if (userStore.use.elementId() !== null) return;
     return redirect('/');
   };
 

@@ -130,11 +130,10 @@ const Signup = () => {
       });
       const parseRes = await res.json();
       if (res.ok) {
-        // deconstruct user object
-
-        // user.setUserState(parseRes);
+        const { properties, elementId } = parseRes.user.records[0]._fields[0];
+        user.setUserState(properties, elementId);
         navigate('/recs');
-      } else updateErrors({ ...errors, alert: parseRes });
+      } else updateErrors({ ...errors, alert: parseRes.err });
     } else {
       const res = await fetch('/api/signup/', {
         method: 'POST',
@@ -146,7 +145,8 @@ const Signup = () => {
       const parseRes = await res.json();
       if (res.ok) {
         //const latestRel = parseRes.latestRelationships.records;
-        user.setUserState(parseRes.user.records[0]._fields[0].properties);
+        const { properties, elementId } = parseRes.user.records[0]._fields[0];
+        user.setUserState(properties, elementId);
         navigate('/recs');
       } else updateErrors({ ...errors, alert: parseRes.err });
     }
