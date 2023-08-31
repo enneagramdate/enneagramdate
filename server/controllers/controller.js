@@ -3,7 +3,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import neo4j from 'neo4j-driver';
 import { hash, compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { dictionary, getAge } from '../utils.js';
+import { dictionary, getAge, addressToPos } from '../utils.js';
 import { point } from '@turf/helpers';
 import distance from '@turf/distance';
 
@@ -59,7 +59,7 @@ apiController.createNewUserNode = async (req, res, next) => {
 
     // verify the driver can connect to the DB
     const serverInfo = await driver.getServerInfo();
-    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     // use the driver to run queries
     const {
@@ -97,8 +97,11 @@ apiController.createNewUserNode = async (req, res, next) => {
       Number(process.env.SALT_ROUNDS)
     );
 
+    const locationGeocoded = await addressToPos(location);
+    const { lat, lng } = locationGeocoded;
+
     const newUserNode = await driver.executeQuery(
-      'MERGE (u:User {email: $email}) ON CREATE SET u.password=$hashedPassword, u.fullName=$fullName, u.enneagramType=$enneagramType, u.birthday=$birthday, u.seekAgeRange=$seekAgeRange, u.gender=$gender, u.seekGender=$seekGender, u.seekRelationship=$seekRelationship, u.location=$location, u.seekRadius=$seekRadius RETURN u',
+      'MERGE (u:User {email: $email}) ON CREATE SET u.password=$hashedPassword, u.fullName=$fullName, u.enneagramType=$enneagramType, u.birthday=$birthday, u.seekAgeRange=$seekAgeRange, u.gender=$gender, u.seekGender=$seekGender, u.seekRelationship=$seekRelationship, u.lat=$lat, u.lng=$lng, u.seekRadius=$seekRadius RETURN u',
       {
         email,
         hashedPassword,
@@ -109,7 +112,8 @@ apiController.createNewUserNode = async (req, res, next) => {
         gender,
         seekGender,
         seekRelationship,
-        location,
+        lat,
+        lng,
         seekRadius,
       },
       { database: 'neo4j' }
@@ -146,7 +150,7 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
     );
 
     const serverInfo = await driver.getServerInfo();
-    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     // from here:
     // User A = signed up / in User
@@ -161,7 +165,8 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
       gender,
       seekGender,
       seekRelationship,
-      location,
+      lat,
+      lng,
       seekRadius,
     } = res.locals.user.records[0]._fields[0].properties;
 
@@ -183,14 +188,14 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
     // get User A's age
     const userAAge = getAge(birthday);
     // get User A's geolocation
-    const userALocation = point(location);
+    const userALocation = point([lng, lat]);
 
     // iterate over all User nodes that are NOT User A
     for (const userB of allOtherUsers) {
       // get User B's age
       const userBAge = getAge(userB.birthday);
       // get User B's location, then calculate distance between A and B
-      const userBLocation = point(userB.location);
+      const userBLocation = point([userB.lng, userB.lat]);
       const distanceAToB = distance(userALocation, userBLocation, {
         units: 'miles',
       });
@@ -254,7 +259,7 @@ apiController.verifyUserExists = async (req, res, next) => {
     );
 
     const serverInfo = await driver.getServerInfo();
-    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     const { email, password } = req.body;
 
@@ -309,7 +314,7 @@ apiController.sendLatestRelationships = async (req, res, next) => {
     );
 
     const serverInfo = await driver.getServerInfo();
-    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     // store the User node's elementId
     const userElId = res.locals.user.records[0]._fields[0].elementId;
@@ -350,7 +355,7 @@ apiController.createLikesOrMatch = async (req, res, next) => {
     );
 
     const serverInfo = await driver.getServerInfo();
-    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     // destructure user A's elementId and user B's elementId from POST body
     const { elementIdA, elementIdB } = req.body;
@@ -420,7 +425,7 @@ apiController.removeRelationships = async (req, res, next) => {
     );
 
     const serverInfo = await driver.getServerInfo();
-    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     // destructure user A's elementId and user B's elementId from POST body
     const { elementIdA, elementIdB } = req.body;
@@ -459,7 +464,7 @@ apiController.getAllUsers = async (req, res, next) => {
     );
 
     const serverInfo = await driver.getServerInfo();
-    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     const allUserNodes = await driver.executeQuery('MATCH (n:User) RETURN n', {
       database: 'neo4j',
@@ -487,7 +492,7 @@ apiController.getAllRelationships = async (req, res, next) => {
     );
 
     const serverInfo = await driver.getServerInfo();
-    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     const allUserRelationships = await driver.executeQuery(
       'MATCH ()-[r]-() RETURN r',
@@ -520,7 +525,7 @@ apiController.deleteDB = async (req, res, next) => {
     );
 
     const serverInfo = await driver.getServerInfo();
-    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     const deletedUserNodes = await driver.executeQuery(
       'MATCH (n:User) DETACH DELETE n RETURN n',
@@ -553,7 +558,7 @@ apiController.getAllUserInfo = async (req, res, next) => {
     );
 
     const serverInfo = await driver.getServerInfo();
-    console.log(`Connection estabilished, serverInfo: ${serverInfo}`);
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     const allUserNodes = await driver.executeQuery('MATCH (n:User) RETURN n', {
       database: 'neo4j',

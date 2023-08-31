@@ -62,7 +62,7 @@ module.exports = {
       directory: path.resolve(__dirname, 'build'),
     },
     proxy: {
-      '/api': {
+      '/api/*': {
         target: 'http://localhost:8000',
         secure: false,
       },

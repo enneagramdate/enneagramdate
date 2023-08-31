@@ -8,9 +8,7 @@ import {
   ActiveUser,
 } from '../types';
 
-export interface UserState {
-  // userInfo: ActiveUser
-  elementId: UserId | null;
+export interface UserInfo {
   enneagramType: EnneagramType | null;
   name: string | null;
   age: number | null;
@@ -20,24 +18,23 @@ export interface UserState {
   birthday: string | null;
   seekAgeRange: number[] | null;
   seekRadius: number | null;
-  location: UserLocation | null;
+  lat: number | null;
+  lng: number | null;
   seekRelationship: string | null;
   email: string | null;
+}
+
+export interface UserState {
+  elementId: UserId | null;
+  info: UserInfo;
   swipes: SwipeCache;
   updateSwipes: (updatedCache: SwipeCache) => void;
   clearSwipes: () => void;
-  setUserState: (
-    id: string,
-    type: string,
-    name: string,
-    age: number,
-    imgUrl: string[]
-  ) => void;
+  setUserState: (user: UserInfo, elementId: UserId) => void;
   clearUserState: () => void;
 }
 
-const userStoreBase = create<UserState>()((set) => ({
-  elementId: null,
+const emptyUser = {
   enneagramType: null,
   name: null,
   age: null,
@@ -47,24 +44,26 @@ const userStoreBase = create<UserState>()((set) => ({
   birthday: null,
   seekAgeRange: null,
   seekRadius: null,
-  location: null,
+  lat: null,
+  lng: null,
   seekRelationship: null,
   email: null,
-  setUserState: (
-    id: UserId,
-    enneagramType: EnneagramType,
-    name: string,
-    age: number,
-    imgUrl: string[]
-  ) => set((_state) => ({ id, enneagramType, name, age, imgUrl })),
+};
+const userStoreBase = create<UserState>()((set) => ({
+  elementId: null,
+  info: emptyUser,
+  setUserState: (user: UserInfo, elementId: UserId) =>
+    set((_state) => {
+      _state.info = user;
+      _state.elementId = elementId;
+      return _state;
+    }),
   clearUserState: () =>
-    set((_state) => ({
-      id: null,
-      enneagramType: null,
-      name: null,
-      age: null,
-      imgUrl: null,
-    })),
+    set((_state) => {
+      _state.info = emptyUser;
+      _state.elementId = null;
+      return _state;
+    }),
   swipes: new Map(),
   updateSwipes: (updatedCache: SwipeCache) =>
     set((_state) => ({ swipes: updatedCache })),
