@@ -11,12 +11,13 @@ import Messages from './chat/Messages';
 import { Socket } from 'socket.io';
 import SendMessage from './chat/SendMessage';
 import userStore from '../stores/userStore';
+import { socket } from '../socket';
 
 const Chat = ({
-  socket,
+  // socket,
   matchedUserId,
 }: {
-  socket: any;
+  // socket: any;
   matchedUserId: UserId;
 }) => {
   const userId = userStore.use.elementId();

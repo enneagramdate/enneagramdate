@@ -39,10 +39,11 @@ const App = () => {
           // * protect this route when we have fullstack auth
           <Route path="/recs" element={<Recs />} />
           <Route path="/matches" element={<MatchList />} />
-          <Route
+          {/* <Route
             path="/chat"
             element={<Chat socket={socket} matchedUserId="test" />}
-          />
+          /> */}
+          <Route path="/chat" element={<Chat matchedUserId="test" />} />
         </Routes>
       </Router>
     </>
