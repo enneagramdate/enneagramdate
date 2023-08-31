@@ -15,6 +15,11 @@ const RecCard = (rec: RecommendedUser) => {
   // import state as needed
   // user state - just need the user's elementId for handleSwipe
   const userId = userStore.use.elementId();
+
+  React.useEffect(() => {
+    if (userId === null) navigate('/login');
+  }, []);
+
   // recs state
   const recs: RecommendedUser[] = recsStore.use.recs();
   const setRecs = recsStore.use.setRecs();

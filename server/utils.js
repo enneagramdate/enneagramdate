@@ -1,3 +1,6 @@
+import { Client } from '@googlemaps/google-maps-services-js';
+const client = new Client({});
+
 export const dictionary = new Map();
 
 // Confirmed that, for all types, compatibilities are MUTUAL. For ex.) Type 1 likes 2, and Type 2 likes 1. And so on, for all other types.
@@ -22,3 +25,18 @@ export function getAge(dateString) {
   }
   return age;
 }
+
+export const addressToPos = async (zip) => {
+  const response = await client.geocode({
+    params: {
+      address: zip,
+      key: process.env.GOOGLE_MAPS,
+    },
+  });
+  if (response.data.status === 'OK') {
+    return response.data.results[0].geometry.location;
+  } else {
+    console.log(results.status);
+    throw new Error('Problem getting user location');
+  }
+};
