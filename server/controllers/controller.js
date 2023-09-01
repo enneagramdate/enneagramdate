@@ -65,7 +65,7 @@ apiController.storeUploadedMedia = async (req, res, next) => {
       log: `storeUploadedMedia connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
-        err: err.message,
+        err: 'Error uploading photo',
       },
     });
   }
