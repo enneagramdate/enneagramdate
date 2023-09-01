@@ -14,6 +14,7 @@ import recsStore from '../stores/recsStore';
 import { EnneagramType, RecommendedUser, UserId } from '../types';
 import fakeUsers from '../data/fake/fakeUserData';
 import RecCard from '../components/RecCard';
+import NavBar from '../components/Navbar';
 
 const Recs = () => {
   // import state
@@ -55,9 +56,12 @@ const Recs = () => {
   });
   // render the last recCard from the recs state (a stack); this is because handleSwipe (see RecCard.tsx) will pop the top rec off the stack and set the state
   return (
-    <div className="flex flex-center justify-center align-center">
-      {recCards[recCards.length - 1]}
-    </div>
+    <>
+      <div className="flex flex-center justify-center align-center">
+        {recCards[recCards.length - 1]}
+      </div>
+      <NavBar />
+    </>
   );
 };
 
