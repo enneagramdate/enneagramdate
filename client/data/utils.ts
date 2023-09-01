@@ -41,7 +41,6 @@ export function getAge(dateString: string) {
 export const getUserData = (parseRes: any) => {
   const data: FilteredResponseData | any = {};
   const { properties, elementId } = parseRes.user.records[0]._fields[0];
-  console.log('PROPERTIES, ', properties);
   data.properties = properties;
   data.elementId = elementId;
   const userRecs: RecommendedUser[] = [];
@@ -75,7 +74,6 @@ export const getUserData = (parseRes: any) => {
   data.userRecs = userRecs;
   data.userMatches = userMatches;
   data.userMatchChats = userMatchChats;
-  console.log(userRecs);
   return data;
 };
 

@@ -2,6 +2,9 @@ import React, { KeyboardEventHandler, useState } from 'react';
 import useUserStore, { UserState } from './stores/userStore';
 // import isEmail from 'validator/lib/isEmail';
 import { useNavigate } from 'react-router-dom';
+import { getUserData } from './data/utils';
+import recsStore from './stores/recsStore';
+import matchesStore from './stores/matchesStore';
 
 interface Info {
   email: string;
@@ -47,7 +50,9 @@ const defaultInfo: Info = {
 
 const Signup = () => {
   const user: UserState = useUserStore((state) => state);
-
+  const setRecs = recsStore.use.setRecs();
+  const setMatches = matchesStore.use.setMatches();
+  const setMatchChats = matchesStore.use.setMatchChats();
   const navigate = useNavigate();
 
   const [image, updateImage] = React.useState(null);
@@ -131,8 +136,14 @@ const Signup = () => {
       });
       const parseRes = await res.json();
       if (res.ok) {
-        const { properties, elementId } = parseRes.user.records[0]._fields[0];
+        const { properties, elementId, userRecs, userMatches, userMatchChats } =
+          getUserData(parseRes);
+        console.log('userRecs', userRecs);
+        // set state
         user.setUserState(properties, elementId);
+        setRecs(userRecs);
+        setMatches(userMatches);
+        setMatchChats(userMatchChats);
         navigate('/recs');
       } else updateErrors({ ...errors, alert: parseRes.err });
     } else {
@@ -145,9 +156,15 @@ const Signup = () => {
       });
       const parseRes = await res.json();
       if (res.ok) {
-        //const latestRel = parseRes.latestRelationships.records;
-        const { properties, elementId } = parseRes.user.records[0]._fields[0];
+        // extract relevant data from response
+        const { properties, elementId, userRecs, userMatches, userMatchChats } =
+          getUserData(parseRes);
+        console.log('userRecs', userRecs);
+        // set state
         user.setUserState(properties, elementId);
+        setRecs(userRecs);
+        setMatches(userMatches);
+        setMatchChats(userMatchChats);
         navigate('/recs');
       } else updateErrors({ ...errors, alert: parseRes.err });
     }
@@ -225,7 +242,7 @@ const Signup = () => {
           <span>Address</span>
           <input
             // TODO: remove defaultValue
-            defaultValue={'24 Sussex Drive Ottawa ON'}
+            value={'24 Sussex Drive Ottawa ON'}
             type="text"
             className={`input input-bordered ${
               errors.zip ? 'input-error' : ''
