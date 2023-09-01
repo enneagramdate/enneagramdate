@@ -55,7 +55,7 @@ const Login = () => {
       const { properties, elementId } = parseRes.user.records[0]._fields[0];
       user.setUserState(properties, elementId);
       navigate('/recs');
-    } else updateErrors({ ...errors, alert: parseRes });
+    } else updateErrors({ ...errors, alert: parseRes.err });
   };
 
   const keyDownHandler: KeyboardEventHandler = (e) => {
