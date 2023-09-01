@@ -7,7 +7,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import './app.css';
 import Splash from './Splash';
 import Signup from './Signup';

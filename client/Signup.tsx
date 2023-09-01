@@ -1,6 +1,6 @@
 import React, { KeyboardEventHandler, useState } from 'react';
 import useUserStore, { UserState } from './stores/userStore';
-import isEmail from 'validator/lib/isEmail';
+// import isEmail from 'validator/lib/isEmail';
 import { useNavigate } from 'react-router-dom';
 
 interface Info {
@@ -83,9 +83,10 @@ const Signup = () => {
   const errorHandler = (text: string, type: infoKey) => {
     const curErr = { ...errors };
     curErr.alert = '';
-    if (type === 'email') {
-      curErr.email = !isEmail(text);
-    } else if (type === 'seekAgeRangeLow') {
+    // if (type === 'email') {
+    //   curErr.email = !isEmail(text);
+    // } else
+    if (type === 'seekAgeRangeLow') {
       const age = Number(text);
       curErr.lowAge = !age || age < 18 || age > info.seekAgeRange[1];
       curErr.highAge = info.seekAgeRange[1] < age;

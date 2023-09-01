@@ -1,5 +1,11 @@
 import 'dotenv/config';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { v4 as uuidv4 } from 'uuid';
 import neo4j from 'neo4j-driver';
 import { hash, compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -13,10 +19,7 @@ const apiController = {};
 
 apiController.storeUploadedMedia = async (req, res, next) => {
   try {
-    // req.file contains 'media' files
-    console.log('req --->', req);
-    console.log('req.file --->', req.file);
-    console.log('req.files --->', req.files);
+    // instantiate a new S3 client
     const s3 = new S3Client({
       credentials: {
         accessKeyId: process.env.ACCESS_KEY,
@@ -24,17 +27,38 @@ apiController.storeUploadedMedia = async (req, res, next) => {
       },
       region: process.env.BUCKET_REGION,
     });
-    const result = await s3.send(
+
+    // destructure req.file for upload data and metadata
+    const { mimetype, buffer } = req.file;
+
+    // instead of upload filename (req.file.originalname), using a uuid to avoid media upload naming collisions on S3 (i.e. uploads with same filename are overwritten)
+    const uploadKey = uuidv4();
+
+    // call S3 client's send method to put uploaded file into S3 bucket (no need to store result)
+    await s3.send(
       new PutObjectCommand({
         Bucket: process.env.BUCKET_NAME,
-        Key: req.file.originalname,
-        Body: req.file.buffer,
-        // following tells S3 type of image (i.e. photo, gif, video)
-        ContentType: req.file.mimetype,
+        Key: uploadKey,
+        // image type (i.e. photo - image/jpeg, gif, video)
+        ContentType: mimetype,
+        // buffer = image data
+        Body: buffer,
       })
     );
-    console.log('result --->', result);
-    res.locals.uploadResult = result;
+
+    // it's AWS S3 best practice to use pre-signed, temporarily available URLs
+    // using PutObjectCommand as the argument generates a URL but that URL doesn't work
+    const s3UploadUrl = await getSignedUrl(
+      s3,
+      new GetObjectCommand({
+        Bucket: process.env.BUCKET_NAME,
+        Key: uploadKey,
+      }),
+      { expiresIn: 604800 } // 1 week
+    );
+
+    // persist upload's S3 URL to createNewUserNode middleware
+    res.locals.s3UploadUrl = s3UploadUrl;
     return next();
   } catch (err) {
     return next({
@@ -62,6 +86,7 @@ apiController.createNewUserNode = async (req, res, next) => {
     console.log(`Connection established, serverInfo: ${serverInfo}`);
 
     // use the driver to run queries
+    // destructure req body fields and image URL from res.locals for the DB query
     const {
       email,
       password,
@@ -75,6 +100,8 @@ apiController.createNewUserNode = async (req, res, next) => {
       location,
       seekRadius,
     } = req.body;
+
+    const { s3UploadUrl } = res.locals;
 
     // if a User with a matching email already exists, throw an Error
     const existingUser = await driver.executeQuery(
@@ -97,11 +124,10 @@ apiController.createNewUserNode = async (req, res, next) => {
       Number(process.env.SALT_ROUNDS)
     );
 
-    const locationGeocoded = await addressToPos(location);
-    const { lat, lng } = locationGeocoded;
+    const { lat, lng } = await addressToPos(location); // example location: { lat: 45.4438861, lng: -75.6930623 }
 
     const newUserNode = await driver.executeQuery(
-      'MERGE (u:User {email: $email}) ON CREATE SET u.password=$hashedPassword, u.fullName=$fullName, u.enneagramType=$enneagramType, u.birthday=$birthday, u.seekAgeRange=$seekAgeRange, u.gender=$gender, u.seekGender=$seekGender, u.seekRelationship=$seekRelationship, u.lat=$lat, u.lng=$lng, u.seekRadius=$seekRadius RETURN u',
+      'MERGE (u:User {email: $email}) ON CREATE SET u.password=$hashedPassword, u.fullName=$fullName, u.enneagramType=$enneagramType, u.birthday=$birthday, u.seekAgeRange=$seekAgeRange, u.gender=$gender, u.seekGender=$seekGender, u.seekRelationship=$seekRelationship, u.lat=$lat, u.lng=$lng, u.seekRadius=$seekRadius, u.s3UploadUrl=$s3UploadUrl RETURN u',
       {
         email,
         hashedPassword,
@@ -115,6 +141,7 @@ apiController.createNewUserNode = async (req, res, next) => {
         lat,
         lng,
         seekRadius,
+        s3UploadUrl,
       },
       { database: 'neo4j' }
     );
@@ -550,7 +577,6 @@ apiController.deleteDB = async (req, res, next) => {
 };
 
 apiController.getAllUserInfo = async (req, res, next) => {
-  console.log('here');
   try {
     const driver = neo4j.driver(
       process.env.NEO4J_URI,

@@ -6,7 +6,6 @@ services:
     container_name: wingman
     ports:
       - '9999:9999'
-      - '8000:8000'
     volumes: [./:/usr/src/app, node_modules:/usr/src/app/node_modules]
     command: npm run dev
     depends_on:
@@ -18,7 +17,7 @@ services:
     ports:
       - '7474:7474'
       - '7687:7687'
-    environment: [NEO4J_AUTH=none]
+    environment: [NEO4J_AUTH=neo4j/secretgraph]
     volumes: [$HOME/neo4j/data:/data]
 
 volumes:
