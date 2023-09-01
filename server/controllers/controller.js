@@ -417,13 +417,24 @@ apiController.createLikesOrMatch = async (req, res, next) => {
     }
     // if B is RECOMMENDED_FOR A
     else if (BtoARelationship.records[0]._fields[0] === 'RECOMMENDED_FOR') {
-      // delete A to B RECOMMENDED_FOR relationship
+      // ! DO NOT delete A to B RECOMMENDED_FOR relationship because this means A will not be recommended for B
       // create A to B LIKES relationship
+      // and instead delete B RECOMMENDED_FOR A, since A has no already liked B
+      // add LIKES from A -> B
       const AlikesB = await driver.executeQuery(
         'MATCH (a:User WHERE elementId(a)=$elementIdA)-[r:RECOMMENDED_FOR]->(b:User WHERE elementId(b)=$elementIdB) MERGE (a)-[l:LIKES]->(b) RETURN l',
         {
           elementIdA,
           elementIdB,
+        },
+        { database: 'neo4j' }
+      );
+      // delete RECOMMENDED_FOR from B -> A
+      const RemoveRecommendationBtoA = await driver.executeQuery(
+        'MATCH (b:User WHERE elementId(b)=$elementIdB)-[r:RECOMMENDED_FOR]->(a:User WHERE elementId(a)=$elementIdA) DELETE r',
+        {
+          elementIdB,
+          elementIdA,
         },
         { database: 'neo4j' }
       );
