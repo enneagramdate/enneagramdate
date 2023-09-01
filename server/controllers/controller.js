@@ -93,13 +93,16 @@ apiController.createNewUserNode = async (req, res, next) => {
       fullName,
       enneagramType,
       birthday,
-      seekAgeRange,
       gender,
       seekGender,
       seekRelationship,
       location,
       seekRadius,
     } = req.body;
+
+    // formData passes this as str1,str2, and BE is processing as [num1, num2]
+    let seekAgeRange = req.body.seekAgeRange.split(',');
+    seekAgeRange = seekAgeRange.map((str) => Number(str));
 
     const { s3UploadUrl } = res.locals;
 
@@ -211,7 +214,7 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
     );
 
     // get User A's Set of compatible types
-    const compatibleTypesForA = dictionary.get(Number(enneagramType));
+    const compatibleTypesForA = dictionary.get(enneagramType);
     // get User A's age
     const userAAge = getAge(birthday);
     // get User A's geolocation
@@ -226,6 +229,7 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
       const distanceAToB = distance(userALocation, userBLocation, {
         units: 'miles',
       });
+
       // do compatibility checks between A and B (and vice versa) to ensure mutual compatibility before creating mutual RECOMMENDED_FORs
       if (
         // check B's enneagramType is in A's compatible types Set

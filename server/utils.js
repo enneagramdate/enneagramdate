@@ -2,15 +2,15 @@ import { Client } from '@googlemaps/google-maps-services-js';
 
 export const dictionary = new Map();
 // Confirmed that, for all types, compatibilities are MUTUAL. For ex.) Type 1 likes 2, and Type 2 likes 1. And so on, for all other types.
-dictionary.set(1, new Set([2, 5, 7]));
-dictionary.set(2, new Set([1, 8, 9]));
-dictionary.set(3, new Set([6, 9]));
-dictionary.set(4, new Set([5, 6, 9]));
-dictionary.set(5, new Set([1, 4, 8]));
-dictionary.set(6, new Set([3, 4, 7, 9]));
-dictionary.set(7, new Set([1, 6, 8]));
-dictionary.set(8, new Set([2, 5, 7]));
-dictionary.set(9, new Set([2, 3, 4, 6]));
+dictionary.set('1', new Set(['2', '5', '7']));
+dictionary.set('2', new Set(['1', '8', '9']));
+dictionary.set('3', new Set(['6', '9']));
+dictionary.set('4', new Set(['5', '6', '9']));
+dictionary.set('5', new Set(['1', '4', '8']));
+dictionary.set('6', new Set(['3', '4', '7', '9']));
+dictionary.set('7', new Set(['1', '6', '8']));
+dictionary.set('8', new Set(['2', '5', '7']));
+dictionary.set('9', new Set(['2', '3', '4', '6']));
 
 // dateString format: '1995-05-10' (YYYY-MM-DD)
 export function getAge(dateString) {

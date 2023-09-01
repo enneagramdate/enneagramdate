@@ -1,6 +1,6 @@
 import React, { KeyboardEventHandler, useState } from 'react';
 import useUserStore, { UserState } from './stores/userStore';
-// import isEmail from 'validator/lib/isEmail';
+import isEmail from 'validator/lib/isEmail';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -28,9 +28,9 @@ const Login = () => {
   const errorHandler = (text: string, type: 'email' | 'password') => {
     const curErr = { ...errors };
     curErr.alert = '';
-    // if (type === 'email') {
-    //   curErr.email = !isEmail(text);
-    // }
+    if (type === 'email') {
+      curErr.email = !isEmail(text);
+    }
     curErr.go = false;
     for (const [key, val] of Object.entries(info)) {
       if (val === '') {

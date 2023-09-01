@@ -11,6 +11,8 @@ import apiController from '../controllers/controller.js';
 // create router
 const apiRouter = express.Router();
 
+// Get User with a cookie / token their profile info
+
 // Login route
 
 apiRouter.post(
@@ -33,7 +35,6 @@ apiRouter.post(
   apiController.createNewUserRecommendations,
   apiController.sendLatestRelationships,
   (req, res) => {
-    console.log(res.locals);
     res.status(200).json(res.locals);
   }
 );
@@ -50,7 +51,13 @@ apiRouter.post('/dislikes', apiController.removeRelationships, (req, res) => {
   res.status(200).json(res.locals);
 });
 
-// to get user and relationship info, and clean DB
+// Logout route
+
+// apiRouter.post('/logout', apiController.logout, (req, res) => {
+//   res.status(200).json({});
+// });
+
+// TEST ROUTES to get user and relationship info, and clean DB (TO BE REMOVED LATER)
 
 apiRouter.get('/users', apiController.getAllUsers, (req, res) => {
   res.status(200).json(res.locals);
