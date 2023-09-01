@@ -141,12 +141,12 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
     );
 
     // get User A's Set of compatible types
-    const compatibleTypesForA = dictionary.get(Number(enneagramType));
+    const compatibleTypesForA = dictionary.get(enneagramType);
     // get User A's age
     const userAAge = getAge(birthday);
     // get User A's geolocation
     const userALocation = point([lng, lat]);
-
+    console.log(userALocation);
     // iterate over all User nodes that are NOT User A
     for (const userB of allOtherUsers) {
       // get User B's age

@@ -12,7 +12,7 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 import recsStore from '../stores/recsStore';
 import { EnneagramType, RecommendedUser, UserId } from '../types';
-import fakeUsers from '../data/fakeUserData';
+import fakeUsers from '../data/fake/fakeUserData';
 import RecCard from '../components/RecCard';
 
 const Recs = () => {

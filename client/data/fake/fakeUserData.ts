@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ActiveUser, RecommendedUser } from '../types';
+import { ActiveUser, RecommendedUser } from '../../types';
 
 const usersArr: RecommendedUser[] = [];
 

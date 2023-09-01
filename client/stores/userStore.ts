@@ -1,12 +1,6 @@
 import { create } from 'zustand';
 import { createSelectors } from './utils';
-import {
-  EnneagramType,
-  UserId,
-  SwipeCache,
-  UserLocation,
-  ActiveUser,
-} from '../types';
+import { EnneagramType, UserId, SwipeCache } from '../types';
 
 export interface UserInfo {
   enneagramType: EnneagramType | null;

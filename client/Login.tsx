@@ -2,10 +2,15 @@ import React, { KeyboardEventHandler, useState } from 'react';
 import useUserStore, { UserState } from './stores/userStore';
 import isEmail from 'validator/lib/isEmail';
 import { useNavigate } from 'react-router-dom';
+import recsStore from './stores/recsStore';
+import matchesStore from './stores/matchesStore';
 
 const Login = () => {
   const user: UserState = useUserStore((state) => state);
   const navigate = useNavigate();
+  const setRecs = recsStore.use.setRecs();
+  const setMatches = matchesStore.use.setMatches();
+  const setMatchChats = matchesStore.use.setMatchChats();
 
   const [info, updateInfo] = useState({
     email: '',
@@ -52,8 +57,25 @@ const Login = () => {
     });
     const parseRes = await res.json();
     if (res.ok) {
+      // console.log('PARSE RES --->', parseRes.latestRelationships);
+      // ! this is an array where each element is an object with a _fields property whose first element is the person data and whose second element is the relationship data
+      for (const record of parseRes.latestRelationships.records) {
+        const field = record._fields;
+        const person = field[0].properties;
+        console.log(person);
+        const { enneagramType, fullName } = person;
+        const relationship = field[1];
+        const { endNodeElementId, startNodeElementId, type } = relationship;
+        console.log(enneagramType, fullName, type);
+      }
+      // console.log('persons data', parseRes.latestRelationships.records);
+      // console.log('relationships data', parseRes.latestRelationships.records);
       const { properties, elementId } = parseRes.user.records[0]._fields[0];
       user.setUserState(properties, elementId);
+      // ! set the latest relationships here, break it up into matches and recommendations
+      // ! set recs
+      // ! set matches
+      // ! set match chats
       navigate('/recs');
     } else updateErrors({ ...errors, alert: parseRes.err });
   };
