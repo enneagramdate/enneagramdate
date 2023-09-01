@@ -1,8 +1,11 @@
 import React from 'react';
 import Matches from '../components/Matches';
 import NavBar from '../components/Navbar';
+import matchesStore from '../stores/matchesStore';
 
 const MatchList = () => {
+  const matches = matchesStore.use.matches();
+  console.log(matches);
   return (
     <>
       <div className=" flex flex-col h-screen items-center justify-between">

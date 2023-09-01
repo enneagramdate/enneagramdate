@@ -420,7 +420,7 @@ apiController.createLikesOrMatch = async (req, res, next) => {
       // delete A to B RECOMMENDED_FOR relationship
       // create A to B LIKES relationship
       const AlikesB = await driver.executeQuery(
-        'MATCH (a:User WHERE elementId(a)=$elementIdA)-[r:RECOMMENDED_FOR]->(b:User WHERE elementId(b)=$elementIdB) DELETE r MERGE (a)-[l:LIKES]->(b) RETURN l',
+        'MATCH (a:User WHERE elementId(a)=$elementIdA)-[r:RECOMMENDED_FOR]->(b:User WHERE elementId(b)=$elementIdB) MERGE (a)-[l:LIKES]->(b) RETURN l',
         {
           elementIdA,
           elementIdB,
