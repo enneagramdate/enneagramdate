@@ -19,15 +19,9 @@ import Chat from './components/Chat';
 import { io } from 'socket.io-client';
 import { socket } from './socket';
 
-// TODO: for production, just can instantiate like const socket = io(), only need this domain for dev mode
 import Login from './Login';
 
 const App = () => {
-  //const userId: UserId | null = userStore.use.info.elementId();
-  // * use to selectively color the UI depending on the user's type
-  //const userType: EnneagramType | null = userStore.use.info.enneagramType();
-  const setUserState = userStore.use.setUserState();
-
   const router = createBrowserRouter([
     {
       path: '/',
@@ -48,6 +42,10 @@ const App = () => {
     {
       path: '/matches',
       element: <MatchList />,
+    },
+    {
+      path: '/chat',
+      element: <Chat />,
     },
   ]);
 

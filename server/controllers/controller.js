@@ -37,7 +37,7 @@ apiController.createNewUserNode = async (req, res, next) => {
       location,
       seekRadius,
     } = req.body;
-
+    console.log('before existing user check');
     // if a User with a matching email already exists, throw an Error
     const existingUser = await driver.executeQuery(
       'MATCH (u:User WHERE u.email=$email) RETURN u',
@@ -52,16 +52,17 @@ apiController.createNewUserNode = async (req, res, next) => {
         'A new user was not created because a user with this email already exists.'
       );
     }
-
+    console.log('before hash password');
     // if not, hash the provided password
     const hashedPassword = await hash(
       password,
       Number(process.env.SALT_ROUNDS)
     );
-
+    console.log('before geocode');
     const locationGeocoded = await addressToPos(location);
+    console.log(locationGeocoded);
     const { lat, lng } = locationGeocoded;
-
+    console.log('before create node');
     const newUserNode = await driver.executeQuery(
       'MERGE (u:User {email: $email}) ON CREATE SET u.password=$hashedPassword, u.fullName=$fullName, u.enneagramType=$enneagramType, u.birthday=$birthday, u.seekAgeRange=$seekAgeRange, u.gender=$gender, u.seekGender=$seekGender, u.seekRelationship=$seekRelationship, u.lat=$lat, u.lng=$lng, u.seekRadius=$seekRadius RETURN u',
       {

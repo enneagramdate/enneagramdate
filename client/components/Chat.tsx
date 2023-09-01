@@ -7,22 +7,22 @@ import React, { useEffect, useState } from 'react';
 */
 
 import { Message, UserId } from '../types';
+import { useNavigate } from 'react-router-dom';
 import Messages from './chat/Messages';
 import { Socket } from 'socket.io';
 import SendMessage from './chat/SendMessage';
 import userStore from '../stores/userStore';
 import { socket } from '../socket';
+import matchesStore from '../stores/matchesStore';
 
-const Chat = ({
-  // socket,
-  matchedUserId,
-}: {
-  // socket: any;
-  matchedUserId: UserId;
-}) => {
+const Chat = () => {
   const userId = userStore.use.elementId();
+  const matchedUserId = matchesStore.use.currentMatchedUser();
   const [room, setRoom] = useState('');
-
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    if (userId === null) navigate('/login');
+  }, []);
   useEffect(() => {
     socket.connect();
     return () => socket.disconnect(true);
@@ -35,7 +35,7 @@ const Chat = ({
       <div>
         <Messages
           socket={socket}
-          matchedUserId={matchedUserId}
+          // matchedUserId={matchedUserId}
           room={room}
           setRoom={setRoom}
         />

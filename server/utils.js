@@ -27,12 +27,14 @@ export function getAge(dateString) {
 }
 
 export const addressToPos = async (zip) => {
+  console.log('in address to pos');
   const response = await client.geocode({
     params: {
       address: zip,
       key: process.env.GOOGLE_MAPS,
     },
   });
+  console.log(response);
   if (response.data.status === 'OK') {
     return response.data.results[0].geometry.location;
   } else {
