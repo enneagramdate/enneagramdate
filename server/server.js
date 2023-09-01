@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+// import { cookieParser } from 'cookie-parser';
 
 // import router
 import apiRouter from './routes/api.js';
@@ -13,6 +14,7 @@ const app = express();
 // handle parsing request body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// app.use(cookieParser());
 
 // handle requests for static files
 app.use(express.static('./../client'));
