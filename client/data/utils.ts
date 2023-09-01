@@ -1,4 +1,9 @@
-import { EnneagramType } from '../types';
+import {
+  EnneagramType,
+  FilteredResponseData,
+  MatchChats,
+  RecommendedUser,
+} from '../types';
 
 export const mapToJSON = (map: Map<any, any>) => {
   return JSON.stringify(Object.fromEntries(map));
@@ -21,3 +26,62 @@ export const setTypeTextColor = (type: EnneagramType) => {
       return 'text-white';
   }
 };
+
+export function getAge(dateString: string) {
+  var today = new Date();
+  var birthDate = new Date(dateString);
+  var age = today.getFullYear() - birthDate.getFullYear();
+  var m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+export const getUserData = (parseRes: any) => {
+  const data: FilteredResponseData | any = {};
+  const { properties, elementId } = parseRes.user.records[0]._fields[0];
+  console.log('PROPERTIES, ', properties);
+  data.properties = properties;
+  data.elementId = elementId;
+  const userRecs: RecommendedUser[] = [];
+  const userMatches: RecommendedUser[] = [];
+  const userMatchChats: MatchChats = new Map();
+  for (const record of parseRes.latestRelationships.records) {
+    const field = record._fields;
+    const personAllProperties = field[0].properties;
+    console.log(personAllProperties);
+    const { enneagramType, fullName, s3UploadUrl, birthday } =
+      personAllProperties;
+    const relationship = field[1];
+    const { startNodeElementId, type } = relationship;
+    // add the recommended user to userRecs temporary array
+    const person: RecommendedUser = {
+      enneagramType: enneagramType,
+      imgUrl: [s3UploadUrl],
+      age: getAge(birthday),
+      name: fullName,
+      elementId: startNodeElementId,
+    };
+    if (type === 'RECOMMENDED_FOR') {
+      userRecs.push(person);
+    }
+    // add the matched user to userMatches temporary array
+    if (type === 'MATCH') {
+      userMatches.push(person);
+      // TODO: if there is a chat history, add that as well
+    }
+  }
+  data.userRecs = userRecs;
+  data.userMatches = userMatches;
+  data.userMatchChats = userMatchChats;
+  console.log(userRecs);
+  return data;
+};
+
+// RETURN { properties, elementId, userRecs, userMatches, userMatchChats }
+
+//   user.setUserState(properties, elementId);
+//       setRecs(userRecs);
+//      setMatches(userMatches);
+//      setMatchChats(userMatchChats);

@@ -224,6 +224,8 @@ const Signup = () => {
         <label className="input-group">
           <span>Address</span>
           <input
+            // TODO: remove defaultValue
+            defaultValue={'24 Sussex Drive Ottawa ON'}
             type="text"
             className={`input input-bordered ${
               errors.zip ? 'input-error' : ''

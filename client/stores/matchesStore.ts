@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { createSelectors } from './utils';
-import { MatchChats, Matches, UserId } from '../types';
+import { MatchChats, Matches, RecommendedUser, UserId } from '../types';
 
 interface MatchesState {
-  matches: Matches;
+  matches: RecommendedUser[];
   currentMatchedUser: UserId;
   setMatches: (matches: Matches) => void;
   chats: MatchChats;
@@ -11,7 +11,7 @@ interface MatchesState {
 }
 
 const matchesStoreBase = create<MatchesState>()((set) => ({
-  matches: new Set(),
+  matches: [],
   currentMatchedUser: '',
   setMatches: (matches: Matches) => set((_state) => ({ matches: matches })),
   chats: new Map(),
