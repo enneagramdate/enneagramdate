@@ -1,8 +1,6 @@
 import { Client } from '@googlemaps/google-maps-services-js';
-const client = new Client({});
 
 export const dictionary = new Map();
-
 // Confirmed that, for all types, compatibilities are MUTUAL. For ex.) Type 1 likes 2, and Type 2 likes 1. And so on, for all other types.
 dictionary.set('1', new Set(['2', '5', '7']));
 dictionary.set('2', new Set(['1', '8', '9']));
@@ -14,7 +12,7 @@ dictionary.set('7', new Set(['1', '6', '8']));
 dictionary.set('8', new Set(['2', '5', '7']));
 dictionary.set('9', new Set(['2', '3', '4', '6']));
 
-// datestring format: '1995-05-10'
+// dateString format: '1995-05-10' (YYYY-MM-DD)
 export function getAge(dateString) {
   var today = new Date();
   var birthDate = new Date(dateString);
@@ -26,6 +24,8 @@ export function getAge(dateString) {
   return age;
 }
 
+// Function that geocodes a zip code to a coordinate position
+const client = new Client({});
 export const addressToPos = async (zip) => {
   // console.log('in address to pos');
   const response = await client.geocode({

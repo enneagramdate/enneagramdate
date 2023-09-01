@@ -4,6 +4,7 @@ import http from 'node:http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import roomCache from './roomCache.js';
+// import { cookieParser } from 'cookie-parser';
 
 // import router
 import apiRouter from './routes/api.js';
@@ -19,6 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+// app.use(cookieParser());
 
 // handle requests for static files
 app.use(express.static('./../client'));

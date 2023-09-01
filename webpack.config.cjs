@@ -53,11 +53,13 @@ module.exports = {
 
   devServer: {
     historyApiFallback: true,
-    host: 'localhost',
-    port: '9999',
+    // required for Docker to work with dev server
+    host: '0.0.0.0',
+    // host: 'localhost',
+    port: 9999,
     static: {
       publicPath: '/',
-      directory: path.resolve(__dirname, 'dist'),
+      directory: path.resolve(__dirname, 'build'),
     },
     proxy: {
       '/api/*': {
