@@ -5,21 +5,25 @@ const Splash = () => {
   const navigate = useNavigate();
   return (
     <>
-      <h1>EnneagramDate</h1>
-      <button className="btn" onClick={() => navigate('/login')}>
-        Login
-      </button>
-      <button className="btn" onClick={() => navigate('/signup')}>
-        Signup
-      </button>
-      <button
-        className="btn"
-        onClick={async () => {
-          populateDB();
-        }}
-      >
-        Get some fake users
-      </button>
+      <div className="bg-primary text-primary-content flex items-center justify-center h-full">
+        <div>
+          <h1 className="text-white text-8xl">Wingman</h1>
+          <div className="flex items-center justify-between">
+            <button
+              className="btn btn-secondary text-white w-1/3"
+              onClick={() => navigate('/login')}
+            >
+              Login
+            </button>
+            <button
+              className="btn btn-secondary text-white w-1/3"
+              onClick={() => navigate('/signup')}
+            >
+              Signup
+            </button>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

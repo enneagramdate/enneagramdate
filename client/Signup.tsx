@@ -178,200 +178,210 @@ const Signup = () => {
 
   return (
     <>
-      <div className="form-control w-full max-w-xs">
-        <label className="input-group">
-          <span>Email</span>
-          <input
-            type="text"
-            placeholder="lover@enneagramdate.com"
-            className={`input input-bordered ${
-              errors.email ? 'input-error' : ''
-            }`}
-            onChange={(event) => inputHandler(event.target.value, 'email')}
-          />
-        </label>
-        <label className="input-group">
-          <span>Password</span>
-          <input
-            type="password"
-            placeholder="Shhh"
-            className="input input-bordered"
-            onChange={(event) => inputHandler(event.target.value, 'password')}
-            onKeyDown={keyDownHandler}
-          />
-        </label>
-        <label className="input-group">
-          <span>Name</span>
-          <input
-            type="text"
-            placeholder="Steve Harvey"
-            className={`input input-bordered`}
-            onChange={(event) => inputHandler(event.target.value, 'fullName')}
-          />
-        </label>
-        <label className="input-group">
-          <span>Enneagram Type</span>
-          <select
-            className="select select-bordered w-full max-w-xs"
-            defaultValue="1-9"
-            onChange={(event) =>
-              inputHandler(event.target.value, 'enneagramType')
-            }
-          >
-            <option disabled>1-9</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-          </select>
-        </label>
-        <label className="input-group">
-          <span>Birthday</span>
-          <input
-            type="date"
-            className={`input input-bordered`}
-            onChange={(event) => inputHandler(event.target.value, 'birthday')}
-          />
-        </label>
-        <label className="input-group">
-          <span>Address</span>
-          <input
-            // TODO: remove defaultValue
-            value={'24 Sussex Drive Ottawa ON'}
-            type="text"
-            className={`input input-bordered ${
-              errors.zip ? 'input-error' : ''
-            }`}
-            onChange={(event) => inputHandler(event.target.value, 'location')}
-          />
-        </label>
-        <label className="input-group">
-          <span>I am</span>
-          <select
-            className="select select-bordered w-full max-w-xs"
-            defaultValue="Gender"
-            onChange={(event) => inputHandler(event.target.value, 'gender')}
-          >
-            <option disabled>Gender</option>
-            <option>Female</option>
-            <option>Male</option>
-            <option>Non-binary</option>
-          </select>
-        </label>
-        <label className="input-group">
-          <span>Seeking</span>
-          <select
-            className="select select-bordered w-full max-w-xs"
-            defaultValue="Gender"
-            onChange={(event) => inputHandler(event.target.value, 'seekGender')}
-          >
-            <option disabled>Gender</option>
-            <option>Female</option>
-            <option>Male</option>
-            <option>Non-binary</option>
-          </select>
-        </label>
-        <label className="input-group">
-          <span>Seeking</span>
-          <select
-            className="select select-bordered w-full max-w-xs"
-            defaultValue="Relationship Type"
-            onChange={(event) =>
-              inputHandler(event.target.value, 'seekRelationship')
-            }
-          >
-            <option disabled>Relationship Type</option>
-            <option>Serious</option>
-            <option>Casual</option>
-          </select>
-        </label>
-        <label className="input-group">
-          <span>Within</span>
-          <input
-            type="text"
-            className={`input input-bordered ${
-              errors.radius ? 'input-error' : ''
-            }`}
-            onChange={(event) => inputHandler(event.target.value, 'seekRadius')}
-          />
-          <span>Miles</span>
-        </label>
-        <label className="input-group">
-          <span>Between</span>
-          <input
-            type="text"
-            placeholder="18"
-            className={`input input-bordered ${
-              errors.lowAge ? 'input-error' : ''
-            }`}
-            onChange={(event) =>
-              inputHandler(event.target.value, 'seekAgeRangeLow')
-            }
-          />
-          <span>and</span>
-          <input
-            type="text"
-            placeholder="118"
-            className={`input input-bordered ${
-              errors.highAge ? 'input-error' : ''
-            }`}
-            onChange={(event) =>
-              inputHandler(event.target.value, 'seekAgeRangeHigh')
-            }
-          />
-        </label>
-        <label htmlFor="upload-photo">
-          <input
-            style={{ display: 'none' }}
-            id="upload-photo"
-            name="upload-photo"
-            type="file"
-            onChange={(event) => {
-              //@ts-expect-error
-              if (event.target.files) updateImage(event.target.files[0]);
-            }}
-          />
-          <span className="btn" aria-label="add">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              className="bi bi-camera"
-              viewBox="0 0 16 16"
+      <div className="bg-primary text-primary-content text-white flex items-center justify-center h-full">
+        <div className="form-control w-full max-w-lg flex items-center justify-center">
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary">Email</span>
+            <input
+              type="text"
+              placeholder="wingman@email.com"
+              className={`input input-bordered bg-opacity-20 w-full ${
+                errors.email ? 'input-error' : ''
+              }`}
+              onChange={(event) => inputHandler(event.target.value, 'email')}
+            />
+          </label>
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary">Password</span>
+            <input
+              type="password"
+              placeholder="Shhh"
+              className="input input-bordered bg-opacity-20 w-full"
+              onChange={(event) => inputHandler(event.target.value, 'password')}
+              onKeyDown={keyDownHandler}
+            />
+          </label>
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary">Name</span>
+            <input
+              type="text"
+              placeholder="Steve Harvey"
+              className={`input input-bordered bg-opacity-20 w-full`}
+              onChange={(event) => inputHandler(event.target.value, 'fullName')}
+            />
+          </label>
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary whitespace-pre">Enneagram Type</span>
+            <select
+              className="select select-bordered w-full max-w-xs bg-opacity-20"
+              defaultValue="1-9"
+              onChange={(event) =>
+                inputHandler(event.target.value, 'enneagramType')
+              }
             >
-              <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1v6zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2z" />
-              <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z" />
-            </svg>
-            Add a Picture
-          </span>
-        </label>
-        <button className="btn" disabled={errors.go} onClick={sender}>
-          Go!
-        </button>
-        {errors.alert && (
-          <div className="alert alert-error">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="stroke-current shrink-0 h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
+              <option disabled>1-9</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+              <option>9</option>
+            </select>
+          </label>
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary">Birthday</span>
+            <input
+              type="date"
+              className={`input input-bordered bg-opacity-20 w-full`}
+              onChange={(event) => inputHandler(event.target.value, 'birthday')}
+            />
+          </label>
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary">Address</span>
+            <input
+              type="text"
+              placeholder="123 Sesame Street"
+              className={`input input-bordered bg-opacity-20 w-full ${
+                errors.zip ? 'input-error' : ''
+              }`}
+              onChange={(event) => inputHandler(event.target.value, 'location')}
+            />
+          </label>
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary whitespace-pre">I am</span>
+            <select
+              className="select select-bordered w-full max-w-xs bg-opacity-20"
+              defaultValue="Gender"
+              onChange={(event) => inputHandler(event.target.value, 'gender')}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>{errors.alert}</span>
-          </div>
-        )}
+              <option disabled>Gender</option>
+              <option>Female</option>
+              <option>Male</option>
+              <option>Non-binary</option>
+            </select>
+          </label>
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary">Seeking</span>
+            <select
+              className="select select-bordered w-full max-w-xs bg-opacity-20"
+              defaultValue="Gender"
+              onChange={(event) =>
+                inputHandler(event.target.value, 'seekGender')
+              }
+            >
+              <option disabled>Gender</option>
+              <option>Female</option>
+              <option>Male</option>
+              <option>Non-binary</option>
+            </select>
+          </label>
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary">Seeking</span>
+            <select
+              className="select select-bordered w-full max-w-xs bg-opacity-20"
+              defaultValue="Relationship Type"
+              onChange={(event) =>
+                inputHandler(event.target.value, 'seekRelationship')
+              }
+            >
+              <option disabled>Relationship Type</option>
+              <option>Serious</option>
+              <option>Casual</option>
+            </select>
+          </label>
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary w-1/4 ">Within</span>
+            <input
+              type="text"
+              placeholder="10"
+              className={`input input-bordered bg-opacity-20 w-1/2 ${
+                errors.radius ? 'input-error' : ''
+              }`}
+              onChange={(event) =>
+                inputHandler(event.target.value, 'seekRadius')
+              }
+            />
+            <span className="bg-secondary w-1/4">Miles</span>
+          </label>
+          <label className="input-group max-w-xs mb-2">
+            <span className="bg-secondary">Between</span>
+            <input
+              type="text"
+              placeholder="18"
+              className={`input input-bordered bg-opacity-20 w-3/4 ${
+                errors.lowAge ? 'input-error' : ''
+              }`}
+              onChange={(event) =>
+                inputHandler(event.target.value, 'seekAgeRangeLow')
+              }
+            />
+            <span className="bg-secondary">and</span>
+            <input
+              type="text"
+              placeholder="118"
+              className={`input input-bordered bg-opacity-20 w-full ${
+                errors.highAge ? 'input-error' : ''
+              }`}
+              onChange={(event) =>
+                inputHandler(event.target.value, 'seekAgeRangeHigh')
+              }
+            />
+          </label>
+          <label htmlFor="upload-photo" className="mb-2">
+            <input
+              style={{ display: 'none' }}
+              id="upload-photo"
+              name="upload-photo"
+              type="file"
+              onChange={(event) => {
+                //@ts-expect-error
+                if (event.target.files) updateImage(event.target.files[0]);
+              }}
+            />
+            <span className="btn btn-secondary" aria-label="add">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-camera"
+                viewBox="0 0 16 16"
+              >
+                <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1v6zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2z" />
+                <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z" />
+              </svg>
+              Add a Picture
+            </span>
+          </label>
+          <button
+            className="btn btn-secondary mb-2"
+            disabled={errors.go}
+            onClick={sender}
+          >
+            Go!
+          </button>
+          {errors.alert && (
+            <div className="alert alert-error">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{errors.alert}</span>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
