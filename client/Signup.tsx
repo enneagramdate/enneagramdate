@@ -312,7 +312,7 @@ const Signup = () => {
               }
             />
           </label>
-          <label htmlFor="upload-photo" className="mb-2">
+          <label htmlFor="upload-photo" className="max-w-xs mb-2">
             <input
               style={{ display: 'none' }}
               id="upload-photo"
@@ -336,6 +336,9 @@ const Signup = () => {
                 <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z" />
               </svg>
               Add a Picture
+              {image && (
+                <img src={URL.createObjectURL(image)} className="w-9 rounded" />
+              )}
             </span>
           </label>
           <button
