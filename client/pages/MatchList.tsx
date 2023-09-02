@@ -15,7 +15,7 @@ const MatchList = () => {
   console.log(matches);
 
   const matchesToRender = matches.map((match) => {
-    return <Match user={match} />;
+    return <Match user={match} key={`match-page-${match.elementId}`} />;
   });
   return (
     <>

@@ -7,6 +7,7 @@ import userStore from '../stores/userStore';
 // import { mapToJSON } from '../data/utils';
 import EnneagramBadge from './EnneagramBadge';
 import axios from 'axios';
+import matchesStore from '../stores/matchesStore';
 
 const RecCard = (rec: RecommendedUser) => {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ const RecCard = (rec: RecommendedUser) => {
   // import state as needed
   // user state - just need the user's elementId for handleSwipe
   const userId = userStore.use.elementId();
+  const matches = matchesStore.use.matches();
+  const setMatches = matchesStore.use.setMatches();
 
   React.useEffect(() => {
     if (userId === null) navigate('/login');
@@ -43,7 +46,14 @@ const RecCard = (rec: RecommendedUser) => {
       elementIdA: userId,
       elementIdB: swipedUserId,
     };
-    const swipeResponse = await axios.post(route, body);
+    const { data } = await axios.post(route, body);
+    console.log('here is the swipeResponse for A matches B', data.AmatchesB);
+    console.log('here is the swipeResponse for A likes B', data.AlikesB);
+    // if it is a match, update matches state
+    if (data.AmatchesB) {
+      const matchesClone: RecommendedUser[] = [...matches, rec];
+      setMatches(matchesClone);
+    }
     // ! after the response, clear the swipes state (can delete all this if swipe state is made unnecessary)
     // clearSwipes();
     // then update the recs state so the next recommendation renders for the user
