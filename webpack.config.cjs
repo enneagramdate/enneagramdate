@@ -33,7 +33,7 @@ module.exports = {
       {
         test: /\.css?$/,
         exclude: /node_modules/,
-        use: ['style-loader', 'css-loader'],
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
       {
         test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
@@ -53,14 +53,16 @@ module.exports = {
 
   devServer: {
     historyApiFallback: true,
-    host: 'localhost',
-    port: '9999',
+    // required for Docker to work with dev server
+    host: '0.0.0.0',
+    // host: 'localhost',
+    port: 9999,
     static: {
       publicPath: '/',
-      directory: path.resolve(__dirname, 'dist'),
+      directory: path.resolve(__dirname, 'build'),
     },
     proxy: {
-      '/api': {
+      '/api/*': {
         target: 'http://localhost:8000',
         secure: false,
       },
