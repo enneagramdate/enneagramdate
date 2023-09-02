@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router, Request, Response } from 'express';
 import multer from 'multer';
 
 // memoryStorage engine stores uploads in the server's file system memory (i.e. not disk) as Buffer objects; we can access entire files from req.file.buffer
@@ -6,10 +6,10 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // import controller
-import apiController from '../controllers/controller.js';
+import apiController from '../controllers/apiController';
 
 // create router
-const apiRouter = express.Router();
+const apiRouter = Router();
 
 // Get User with a cookie / token their profile info
 
@@ -19,7 +19,7 @@ apiRouter.post(
   '/',
   apiController.verifyUserExists,
   apiController.sendLatestRelationships,
-  (req, res) => {
+  (req: Request, res: Response) => {
     res.status(200).json(res.locals);
   }
 );
@@ -34,22 +34,30 @@ apiRouter.post(
   apiController.createNewUserNode,
   apiController.createNewUserRecommendations,
   apiController.sendLatestRelationships,
-  (req, res) => {
+  (req: Request, res: Response) => {
     res.status(200).json(res.locals);
   }
 );
 
 // User A likes User B
 
-apiRouter.post('/likes', apiController.createLikesOrMatch, (req, res) => {
-  res.status(200).json(res.locals);
-});
+apiRouter.post(
+  '/likes',
+  apiController.createLikesOrMatch,
+  (req: Request, res: Response) => {
+    res.status(200).json(res.locals);
+  }
+);
 
 // User A dislikes or unmatches User B
 
-apiRouter.post('/dislikes', apiController.removeRelationships, (req, res) => {
-  res.status(200).json(res.locals);
-});
+apiRouter.post(
+  '/dislikes',
+  apiController.removeRelationships,
+  (req: Request, res: Response) => {
+    res.status(200).json(res.locals);
+  }
+);
 
 // Logout route
 
@@ -57,27 +65,38 @@ apiRouter.post('/dislikes', apiController.removeRelationships, (req, res) => {
 //   res.status(200).json({});
 // });
 
-// TEST ROUTES to get user and relationship info, and clean DB (TO BE REMOVED LATER)
-
-apiRouter.get('/users', apiController.getAllUsers, (req, res) => {
-  res.status(200).json(res.locals);
-});
+// TEST ROUTES to get user and relationship info, and clean DB - will be removed!
 
 apiRouter.get(
-  '/relationships',
-  apiController.getAllRelationships,
-  (req, res) => {
+  '/users',
+  apiController.getAllUsers,
+  (req: Request, res: Response) => {
     res.status(200).json(res.locals);
   }
 );
 
-apiRouter.get('/delete', apiController.deleteDB, (req, res) => {
-  res.status(200).json(res.locals);
-});
+apiRouter.get(
+  '/relationships',
+  apiController.getAllRelationships,
+  (req: Request, res: Response) => {
+    res.status(200).json(res.locals);
+  }
+);
 
-// TODO: removing testing routes
-apiRouter.get('/users/info', apiController.getAllUserInfo, (req, res) => {
-  res.status(200).json(res.locals.userInfo);
-});
+apiRouter.get(
+  '/delete',
+  apiController.deleteDB,
+  (req: Request, res: Response) => {
+    res.status(200).json(res.locals);
+  }
+);
+
+apiRouter.get(
+  '/users/info',
+  apiController.getAllUserInfo,
+  (req: Request, res: Response) => {
+    res.status(200).json(res.locals.userInfo);
+  }
+);
 
 export default apiRouter;

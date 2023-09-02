@@ -1,6 +1,24 @@
 import { Client } from '@googlemaps/google-maps-services-js';
+import 'dotenv/config';
 
-export const dictionary = new Map();
+// Function that geocodes user input to a coordinate position
+const client = new Client({});
+const addressToPos = async (zip: string) => {
+  const response = await client.geocode({
+    params: {
+      address: zip,
+      key: process.env.GOOGLE_MAPS as string,
+    },
+  });
+  if (response.data.status === 'OK') {
+    return response.data.results[0].geometry.location;
+  } else {
+    // console.log(results.status);
+    throw new Error('Problem getting user location');
+  }
+};
+
+const dictionary = new Map<string, Set<string>>();
 // Confirmed that, for all types, compatibilities are MUTUAL. For ex.) Type 1 likes 2, and Type 2 likes 1. And so on, for all other types.
 dictionary.set('1', new Set(['2', '5', '7']));
 dictionary.set('2', new Set(['1', '8', '9']));
@@ -13,9 +31,9 @@ dictionary.set('8', new Set(['2', '5', '7']));
 dictionary.set('9', new Set(['2', '3', '4', '6']));
 
 // dateString format: '1995-05-10' (YYYY-MM-DD)
-export function getAge(dateString) {
+function getAge(date: string): number {
   var today = new Date();
-  var birthDate = new Date(dateString);
+  var birthDate = new Date(date);
   var age = today.getFullYear() - birthDate.getFullYear();
   var m = today.getMonth() - birthDate.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
@@ -24,19 +42,4 @@ export function getAge(dateString) {
   return age;
 }
 
-// Function that geocodes a zip code to a coordinate position
-const client = new Client({});
-export const addressToPos = async (zip) => {
-  const response = await client.geocode({
-    params: {
-      address: zip,
-      key: process.env.GOOGLE_MAPS,
-    },
-  });
-  if (response.data.status === 'OK') {
-    return response.data.results[0].geometry.location;
-  } else {
-    console.log(results.status);
-    throw new Error('Problem getting user location');
-  }
-};
+export { addressToPos, dictionary, getAge };

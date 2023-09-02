@@ -1,15 +1,16 @@
 import 'dotenv/config';
-import express from 'express';
+import { AsyncError } from './types/types';
+import express, { Application, Request, Response, NextFunction } from 'express';
 // import { cookieParser } from 'cookie-parser';
 
 // import router
-import apiRouter from './routes/api.js';
+import apiRouter from './routes/api';
 
 // define server port
-const PORT = process.env.PORT || 3000;
+const PORT: string = process.env.PORT || '3000';
 
 // create express server instance
-const app = express();
+const app: Application = express();
 
 // handle parsing request body
 app.use(express.json());
@@ -23,13 +24,13 @@ app.use(express.static('./../client'));
 app.use('/api', apiRouter);
 
 // catch-all route handler for any requests to an unknown route
-app.use((req, res) =>
+app.use((req: Request, res: Response) =>
   res.status(404).send("This is not the page you're looking for...")
 );
 
 // global error handler
-app.use((err, req, res, next) => {
-  const defaultErr = {
+app.use((err: AsyncError, req: Request, res: Response, next: NextFunction) => {
+  const defaultErr: AsyncError = {
     log: 'Express error handler caught unknown middleware error.',
     status: 500,
     message: {
