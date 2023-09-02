@@ -14,6 +14,7 @@ import SendMessage from './chat/SendMessage';
 import userStore from '../stores/userStore';
 import { socket } from '../socket';
 import matchesStore from '../stores/matchesStore';
+import NavBar from './Navbar';
 
 const Chat = () => {
   const userId = userStore.use.elementId();
@@ -31,17 +32,20 @@ const Chat = () => {
     socket.emit('join_room', { userId, matchedUserId });
   }, []);
   return (
-    <div className="chat-container">
-      <div>
-        <Messages
-          socket={socket}
-          // matchedUserId={matchedUserId}
-          room={room}
-          setRoom={setRoom}
-        />
-        <SendMessage socket={socket} room={room} setRoom={setRoom} />
+    <>
+      <div className="chat-container">
+        <div>
+          <Messages
+            socket={socket}
+            // matchedUserId={matchedUserId}
+            room={room}
+            setRoom={setRoom}
+          />
+          <SendMessage socket={socket} room={room} setRoom={setRoom} />
+        </div>
       </div>
-    </div>
+      <NavBar />
+    </>
   );
 };
 

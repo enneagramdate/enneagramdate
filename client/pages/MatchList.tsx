@@ -3,6 +3,7 @@ import Match from '../components/Matches';
 import userStore from '../stores/userStore';
 import { useNavigate } from 'react-router-dom';
 import matchesStore from '../stores/matchesStore';
+import NavBar from '../components/Navbar';
 
 const MatchList = () => {
   const userId = userStore.use.elementId();
@@ -17,16 +18,14 @@ const MatchList = () => {
     return <Match user={match} />;
   });
   return (
-    <div className=" flex flex-col h-screen items-center justify-between">
-      <div className="rounded-xl h-4/5 w-6/12 bg-secondary flex flex-col items-center content-center">
-        {/* <Match />
-        <Match />
-        <Match />
-        <Match />
-        <Match /> */}
-        {matchesToRender}
+    <>
+      <div className=" flex flex-col h-screen items-center justify-between">
+        <div className="rounded-xl h-4/5 w-6/12 bg-secondary flex flex-col items-center content-center">
+          {matchesToRender}
+        </div>
       </div>
-    </div>
+      <NavBar />
+    </>
   );
 };
 
