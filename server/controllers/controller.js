@@ -373,6 +373,47 @@ apiController.sendLatestRelationships = async (req, res, next) => {
   }
 };
 
+// Update chat history between matched Users A and B
+
+apiController.postNewChats = async (req, res, next) => {
+  try {
+    const driver = neo4j.driver(
+      process.env.NEO4J_URI,
+      neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
+    );
+
+    const serverInfo = await driver.getServerInfo();
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
+
+    // destructure user A's elementId and user B's elementId from POST body
+    const { elementIdA, elementIdB, allChats } = req.body;
+
+    // store all chat objects on :MATCH relationships from A to B and vice versa
+    const matchesChatHistory = await driver.executeQuery(
+      'MATCH (a:User WHERE elementId(a)=$elementIdA)-[r:MATCH]-(b:User WHERE elementId(b)=$elementIdB) SET r.allChats=$allChats RETURN r',
+      {
+        elementIdA,
+        elementIdB,
+        allChats,
+      },
+      { database: 'neo4j' }
+    );
+
+    await driver.close();
+
+    res.locals.matchesChatHistory = matchesChatHistory;
+    return next();
+  } catch (err) {
+    return next({
+      log: `postNewChats connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err: err.message,
+      },
+    });
+  }
+};
+
 // STRETCH: User A edits their profile information (replace images, change preferences, etc.)
 
 // User A LIKES User B

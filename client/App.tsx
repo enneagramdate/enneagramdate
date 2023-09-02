@@ -12,12 +12,8 @@ import './app.css';
 import Splash from './Splash';
 import Signup from './Signup';
 import Recs from './pages/Recs';
-import { EnneagramType, UserId } from './types';
-import userStore from './stores/userStore';
 import MatchList from './pages/MatchList';
 import Chat from './components/Chat';
-import { io } from 'socket.io-client';
-import { socket } from './socket';
 
 import Login from './Login';
 

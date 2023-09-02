@@ -4,8 +4,7 @@ import isEmail from 'validator/lib/isEmail';
 import { useNavigate } from 'react-router-dom';
 import recsStore from './stores/recsStore';
 import matchesStore from './stores/matchesStore';
-import { MatchChats, Matches, RecommendedUser } from './types';
-import { getAge, getUserData } from './data/utils';
+import { getUserData } from './data/utils';
 
 const Login = () => {
   const user: UserState = useUserStore((state) => state);
@@ -85,7 +84,7 @@ const Login = () => {
             <span className="bg-secondary">Email</span>
             <input
               type="text"
-              placeholder="lover@enneagramdate.com"
+              placeholder="lover@wingman.com"
               className={`input input-bordered bg-opacity-20 w-full ${
                 errors.email ? 'input-error' : ''
               }`}

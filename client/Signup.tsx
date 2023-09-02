@@ -184,7 +184,7 @@ const Signup = () => {
             <span className="bg-secondary">Email</span>
             <input
               type="text"
-              placeholder="wingman@email.com"
+              placeholder="lover@wingman.com"
               className={`input input-bordered bg-opacity-20 w-full ${
                 errors.email ? 'input-error' : ''
               }`}

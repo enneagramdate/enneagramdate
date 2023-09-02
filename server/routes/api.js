@@ -51,6 +51,17 @@ apiRouter.post('/dislikes', apiController.removeRelationships, (req, res) => {
   res.status(200).json(res.locals);
 });
 
+// Post chat history on both matched Users (after both have left chat room), and send back updated relationship info
+
+apiRouter.post(
+  '/chats',
+  apiController.postNewChats,
+  apiController.sendLatestRelationships,
+  (req, res) => {
+    res.status(200).json(res.locals);
+  }
+);
+
 // Logout route
 
 // apiRouter.post('/logout', apiController.logout, (req, res) => {
