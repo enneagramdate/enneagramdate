@@ -53,6 +53,7 @@ const RecCard = (rec: RecommendedUser) => {
     if (data.AmatchesB) {
       const matchesClone: RecommendedUser[] = [...matches, rec];
       setMatches(matchesClone);
+      alert(`You just matched with ${name}!`);
     }
     // ! after the response, clear the swipes state (can delete all this if swipe state is made unnecessary)
     // clearSwipes();
