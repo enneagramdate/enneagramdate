@@ -59,4 +59,3 @@ const RecCard = (rec) => {
                         React.createElement(HiCheck, null)))))));
 };
 export default RecCard;
-//# sourceMappingURL=RecCard.js.map

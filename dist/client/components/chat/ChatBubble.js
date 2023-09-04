@@ -8,4 +8,3 @@ const ChatBubble = ({ messageObj }) => {
         React.createElement("div", { className: "chat-bubble bg-info" }, message)));
 };
 export default ChatBubble;
-//# sourceMappingURL=ChatBubble.js.map

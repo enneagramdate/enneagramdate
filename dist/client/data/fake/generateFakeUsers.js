@@ -45,4 +45,3 @@ export const populateDB = () => __awaiter(void 0, void 0, void 0, function* () {
         yield axios.post('/api/signup', body);
     }
 });
-//# sourceMappingURL=generateFakeUsers.js.map

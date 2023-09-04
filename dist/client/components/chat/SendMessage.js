@@ -36,4 +36,3 @@ const SendMessage = ({ socket, room, setRoom, }) => {
         React.createElement("button", { className: "btn btn-primary", onClick: sendMessage }, "Send")));
 };
 export default SendMessage;
-//# sourceMappingURL=SendMessage.js.map

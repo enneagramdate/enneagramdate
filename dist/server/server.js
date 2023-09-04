@@ -52,4 +52,3 @@ io.on('connection', (socket) => {
 });
 server.listen(PORT, () => console.log(`Currently listening on port: ${PORT}`));
 export default app;
-//# sourceMappingURL=server.js.map

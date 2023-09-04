@@ -82,10 +82,10 @@ const Login = () => {
             React.createElement("div", { className: "form-control w-full max-w-xs" },
                 React.createElement("label", { className: "input-group text-white w-full mb-4" },
                     React.createElement("span", { className: "bg-secondary" }, "Email"),
-                    React.createElement("input", { type: "text", placeholder: "lover@wingman.com", className: `input input-bordered bg-opacity-20 w-full ${errors.email ? 'input-error' : ''}`, onChange: (event) => inputHandler(event.target.value, 'email') })),
+                    React.createElement("input", { type: "text", placeholder: "lover@wingman.com", className: `input input-bordered bg-opacity-20 w-full ${errors.email ? 'input-error' : ''}`, name: "email", onChange: (event) => inputHandler(event.target.value, 'email') })),
                 React.createElement("label", { className: "input-group text-white mb-4" },
                     React.createElement("span", { className: "bg-secondary" }, "Password"),
-                    React.createElement("input", { type: "password", placeholder: "Shhh", className: "input input-bordered bg-opacity-20 w-full", onChange: (event) => inputHandler(event.target.value, 'password'), onKeyDown: keyDownHandler })),
+                    React.createElement("input", { type: "password", placeholder: "Shhh", className: "input input-bordered bg-opacity-20 w-full", onChange: (event) => inputHandler(event.target.value, 'password'), onKeyDown: keyDownHandler, name: "password" })),
                 React.createElement("button", { className: "btn btn-secondary mb-4", disabled: errors.go, onClick: sender }, "Go!"),
                 errors.alert && (React.createElement("div", { className: "alert alert-error" },
                     React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "stroke-current shrink-0 h-6 w-6", fill: "none", viewBox: "0 0 24 24" },
@@ -93,4 +93,3 @@ const Login = () => {
                     React.createElement("span", null, errors.alert)))))));
 };
 export default Login;
-//# sourceMappingURL=Login.js.map

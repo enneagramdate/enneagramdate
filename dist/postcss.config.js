@@ -4,4 +4,3 @@ export default {
         autoprefixer: {},
     },
 };
-//# sourceMappingURL=postcss.config.js.map

@@ -88,6 +88,7 @@ const Login = () => {
               className={`input input-bordered bg-opacity-20 w-full ${
                 errors.email ? 'input-error' : ''
               }`}
+              name="email"
               onChange={(event) => inputHandler(event.target.value, 'email')}
             />
           </label>
@@ -99,6 +100,7 @@ const Login = () => {
               className="input input-bordered bg-opacity-20 w-full"
               onChange={(event) => inputHandler(event.target.value, 'password')}
               onKeyDown={keyDownHandler}
+              name="password"
             />
           </label>
           <button
