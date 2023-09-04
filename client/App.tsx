@@ -12,17 +12,12 @@ import './app.css';
 import Splash from './Splash';
 import Signup from './Signup';
 import Recs from './pages/Recs';
-import { EnneagramType, UserId } from './types';
-import userStore from './stores/userStore';
-import MatchList from './MatchList';
+import MatchList from './pages/MatchList';
+import Chat from './components/Chat';
+
 import Login from './Login';
 
 const App = () => {
-  //const userId: UserId | null = userStore.use.info.elementId();
-  // * use to selectively color the UI depending on the user's type
-  //const userType: EnneagramType | null = userStore.use.info.enneagramType();
-  const setUserState = userStore.use.setUserState();
-
   const router = createBrowserRouter([
     {
       path: '/',
@@ -43,6 +38,10 @@ const App = () => {
     {
       path: '/matches',
       element: <MatchList />,
+    },
+    {
+      path: '/chat',
+      element: <Chat />,
     },
   ]);
 

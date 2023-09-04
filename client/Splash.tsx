@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { populateDB } from './data/fake/generateFakeUsers';
 const Splash = () => {
   const navigate = useNavigate();
   return (

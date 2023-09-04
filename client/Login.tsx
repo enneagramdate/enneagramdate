@@ -2,10 +2,16 @@ import React, { KeyboardEventHandler, useState } from 'react';
 import useUserStore, { UserState } from './stores/userStore';
 import isEmail from 'validator/lib/isEmail';
 import { useNavigate } from 'react-router-dom';
+import recsStore from './stores/recsStore';
+import matchesStore from './stores/matchesStore';
+import { getUserData } from './data/utils';
 
 const Login = () => {
   const user: UserState = useUserStore((state) => state);
   const navigate = useNavigate();
+  const setRecs = recsStore.use.setRecs();
+  const setMatches = matchesStore.use.setMatches();
+  const setMatchChats = matchesStore.use.setMatchChats();
 
   const [info, updateInfo] = useState({
     email: '',
@@ -52,10 +58,16 @@ const Login = () => {
     });
     const parseRes = await res.json();
     if (res.ok) {
-      const { properties, elementId } = parseRes.user.records[0]._fields[0];
+      // extract relevant data from response
+      const { properties, elementId, userRecs, userMatches, userMatchChats } =
+        getUserData(parseRes);
+      // set state
       user.setUserState(properties, elementId);
+      setRecs(userRecs);
+      setMatches(userMatches);
+      setMatchChats(userMatchChats);
       navigate('/recs');
-    } else updateErrors({ ...errors, alert: parseRes });
+    } else updateErrors({ ...errors, alert: parseRes.err });
   };
 
   const keyDownHandler: KeyboardEventHandler = (e) => {
@@ -72,7 +84,7 @@ const Login = () => {
             <span className="bg-secondary">Email</span>
             <input
               type="text"
-              placeholder="lover@enneagramdate.com"
+              placeholder="lover@wingman.com"
               className={`input input-bordered bg-opacity-20 w-full ${
                 errors.email ? 'input-error' : ''
               }`}

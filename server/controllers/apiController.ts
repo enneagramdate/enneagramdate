@@ -93,7 +93,7 @@ apiController.storeUploadedMedia = async (req, res, next) => {
       log: `storeUploadedMedia connection error\n${err}\nCause: ${err.cause}`,
       status: 500,
       message: {
-        err: err.message,
+        err: 'Error uploading photo',
       },
     });
   }
@@ -150,7 +150,6 @@ apiController.createNewUserNode = async (req, res, next) => {
         'A new user was not created because a user with this email already exists.'
       );
     }
-
     // if not, hash the provided password
     const hashedPassword = await hash(password, Number(SALT_ROUNDS));
 
@@ -248,7 +247,7 @@ apiController.createNewUserRecommendations = async (req, res, next) => {
     const userAAge = getAge(birthday);
     // get User A's geolocation
     const userALocation = point([lng, lat]);
-
+    console.log(userALocation);
     // iterate over all User nodes that are NOT User A
     for (const userB of adjustedAllOtherUsers) {
       // get User B's age
@@ -406,6 +405,47 @@ apiController.sendLatestRelationships = async (req, res, next) => {
   }
 };
 
+// Update chat history between matched Users A and B
+
+apiController.postNewChats = async (req, res, next) => {
+  try {
+    const driver = neo4j.driver(
+      NEO4J_URI,
+      neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD)
+    );
+
+    const serverInfo = await driver.getServerInfo();
+    console.log(`Connection established, serverInfo: ${serverInfo}`);
+
+    // destructure user A's elementId and user B's elementId from POST body
+    const { elementIdA, elementIdB, allChats } = req.body;
+
+    // store all chat objects on :MATCH relationships from A to B and vice versa
+    const matchesChatHistory = await driver.executeQuery(
+      'MATCH (a:User WHERE elementId(a)=$elementIdA)-[r:MATCH]-(b:User WHERE elementId(b)=$elementIdB) SET r.allChats=$allChats RETURN r',
+      {
+        elementIdA,
+        elementIdB,
+        allChats,
+      },
+      { database: 'neo4j' }
+    );
+
+    await driver.close();
+
+    res.locals.matchesChatHistory = matchesChatHistory;
+    return next();
+  } catch (err) {
+    return next({
+      log: `postNewChats connection error\n${err}\nCause: ${err.cause}`,
+      status: 500,
+      message: {
+        err: err.message,
+      },
+    });
+  }
+};
+
 // STRETCH: User A edits their profile information (replace images, change preferences, etc.)
 
 // User A LIKES User B
@@ -453,13 +493,24 @@ apiController.createLikesOrMatch = async (req, res, next) => {
     // if B is RECOMMENDED_FOR A
     //@ts-ignore
     else if (BtoARelationship.records[0]._fields[0] === 'RECOMMENDED_FOR') {
-      // delete A to B RECOMMENDED_FOR relationship
+      // ! DO NOT delete A to B RECOMMENDED_FOR relationship because this means A will not be recommended for B
       // create A to B LIKES relationship
+      // and instead delete B RECOMMENDED_FOR A, since A has no already liked B
+      // add LIKES from A -> B
       const AlikesB = await driver.executeQuery(
-        'MATCH (a:User WHERE elementId(a)=$elementIdA)-[r:RECOMMENDED_FOR]->(b:User WHERE elementId(b)=$elementIdB) DELETE r MERGE (a)-[l:LIKES]->(b) RETURN l',
+        'MATCH (a:User WHERE elementId(a)=$elementIdA)-[r:RECOMMENDED_FOR]->(b:User WHERE elementId(b)=$elementIdB) MERGE (a)-[l:LIKES]->(b) RETURN l',
         {
           elementIdA,
           elementIdB,
+        },
+        { database: 'neo4j' }
+      );
+      // delete RECOMMENDED_FOR from B -> A
+      const RemoveRecommendationBtoA = await driver.executeQuery(
+        'MATCH (b:User WHERE elementId(b)=$elementIdB)-[r:RECOMMENDED_FOR]->(a:User WHERE elementId(a)=$elementIdA) DELETE r',
+        {
+          elementIdB,
+          elementIdA,
         },
         { database: 'neo4j' }
       );

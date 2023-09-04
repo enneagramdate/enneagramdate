@@ -4,6 +4,7 @@ import 'dotenv/config';
 // Function that geocodes user input to a coordinate position
 const client = new Client({});
 const addressToPos = async (zip: string) => {
+  console.log('in address to POS', process.env.GOOGLE_MAPS);
   const response = await client.geocode({
     params: {
       address: zip,

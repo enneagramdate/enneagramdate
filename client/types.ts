@@ -22,8 +22,9 @@ export interface ActiveUser {
   seekGender: string | null;
   birthday: string | null;
   seekAgeRange: number[] | null;
-  seekRadius: number | null;
-  location: UserLocation | null;
+  seekRadius: string | null;
+  lat: number | null;
+  lng: number | null;
   seekRelationship: string | null;
   email: string | null;
 }
@@ -31,12 +32,20 @@ export interface ActiveUser {
 // export type RecsMap = Map<UserId, User>;
 export type Swipe = 'like' | 'dislike';
 export type SwipeCache = Map<RecId, Swipe>;
-// export type SwipeCache = Map<SwipeRelationship, Swipe>;
-// export interface SwipeCache {
-//   [key: UserId]: Swipe
-// }
+export type Matches = RecommendedUser[];
+export type Message = {
+  message: string;
+  time: string;
+  sender: UserId;
+  room: string;
+};
+export type ChatLog = Message[];
+export type MatchChats = Map<UserId, ChatLog>;
 
-// type SwipeRelationship = {
-//   swiper: UserId;
-//   swipee: UserId;
-// };
+export interface FilteredResponseData {
+  properties: ActiveUser;
+  elementId: UserId;
+  userRecs: RecommendedUser[];
+  userMatches: RecommendedUser[];
+  userMatchChats: MatchChats;
+}

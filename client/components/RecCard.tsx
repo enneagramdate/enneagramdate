@@ -1,24 +1,21 @@
 import React from 'react';
 import { HiCheck, HiXMark } from 'react-icons/hi2';
-import { useNavigate } from 'react-router-dom';
 import { RecommendedUser, Swipe, UserId, SwipeCache } from '../types';
 import recsStore from '../stores/recsStore';
 import userStore from '../stores/userStore';
 // import { mapToJSON } from '../data/utils';
 import EnneagramBadge from './EnneagramBadge';
 import axios from 'axios';
+import matchesStore from '../stores/matchesStore';
 
 const RecCard = (rec: RecommendedUser) => {
-  const navigate = useNavigate();
   // destructure user information from props
   const { elementId, enneagramType, name, age, imgUrl } = rec;
   // import state as needed
   // user state - just need the user's elementId for handleSwipe
   const userId = userStore.use.elementId();
-
-  React.useEffect(() => {
-    if (userId === null) navigate('/login');
-  }, []);
+  const matches = matchesStore.use.matches();
+  const setMatches = matchesStore.use.setMatches();
 
   // recs state
   const recs: RecommendedUser[] = recsStore.use.recs();
@@ -43,7 +40,15 @@ const RecCard = (rec: RecommendedUser) => {
       elementIdA: userId,
       elementIdB: swipedUserId,
     };
-    const swipeResponse = await axios.post(route, body);
+    const { data } = await axios.post(route, body);
+    console.log('here is the swipeResponse for A matches B', data.AmatchesB);
+    console.log('here is the swipeResponse for A likes B', data.AlikesB);
+    // if it is a match, update matches state
+    if (data.AmatchesB) {
+      const matchesClone: RecommendedUser[] = [...matches, rec];
+      setMatches(matchesClone);
+      alert(`You just matched with ${name}!`);
+    }
     // ! after the response, clear the swipes state (can delete all this if swipe state is made unnecessary)
     // clearSwipes();
     // then update the recs state so the next recommendation renders for the user
@@ -62,13 +67,13 @@ const RecCard = (rec: RecommendedUser) => {
 
   return (
     <div className="card-container">
-      <div className="card w-96 bg-primary text-primary-content">
+      <div className="card w-96 bg-primary text-primary-content flex items-center justify-center">
         <div className="h-8 bg-primary"></div>
         <div className="h-96 carousel carousel-vertical">{images}</div>
         <div className="card-body">
-          <div className="rec-info flex flex-center justify-center space-x-24 border border-default">
-            <div className="card-title">
-              {name}, {age}
+          <div className="rec-info flex flex-center justify-between items-center">
+            <div className="card-title text-white text-md">
+              {`${name},\n\ ${age}`}
             </div>
             <div className="flex flex-end">
               <EnneagramBadge enneagramType={enneagramType} />

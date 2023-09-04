@@ -1,12 +1,6 @@
 import { create } from 'zustand';
 import { createSelectors } from './utils';
-import {
-  EnneagramType,
-  UserId,
-  SwipeCache,
-  UserLocation,
-  ActiveUser,
-} from '../types';
+import { EnneagramType, UserId, SwipeCache } from '../types';
 
 export interface UserInfo {
   enneagramType: EnneagramType | null;
@@ -53,16 +47,16 @@ const userStoreBase = create<UserState>()((set) => ({
   elementId: null,
   info: emptyUser,
   setUserState: (user: UserInfo, elementId: UserId) =>
-    set((_state) => {
-      _state.info = user;
-      _state.elementId = elementId;
-      return _state;
+    set((state) => {
+      state.info = user;
+      state.elementId = elementId;
+      return state;
     }),
   clearUserState: () =>
-    set((_state) => {
-      _state.info = emptyUser;
-      _state.elementId = null;
-      return _state;
+    set((state) => {
+      state.info = emptyUser;
+      state.elementId = null;
+      return state;
     }),
   swipes: new Map(),
   updateSwipes: (updatedCache: SwipeCache) =>

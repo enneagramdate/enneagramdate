@@ -1,7 +1,10 @@
 import React, { KeyboardEventHandler, useState } from 'react';
 import useUserStore, { UserState } from './stores/userStore';
-import isEmail from 'validator/lib/isEmail';
+// import isEmail from 'validator/lib/isEmail';
 import { useNavigate } from 'react-router-dom';
+import { getUserData } from './data/utils';
+import recsStore from './stores/recsStore';
+import matchesStore from './stores/matchesStore';
 
 interface Info {
   email: string;
@@ -47,7 +50,9 @@ const defaultInfo: Info = {
 
 const Signup = () => {
   const user: UserState = useUserStore((state) => state);
-
+  const setRecs = recsStore.use.setRecs();
+  const setMatches = matchesStore.use.setMatches();
+  const setMatchChats = matchesStore.use.setMatchChats();
   const navigate = useNavigate();
 
   const [image, updateImage] = React.useState(null);
@@ -83,9 +88,10 @@ const Signup = () => {
   const errorHandler = (text: string, type: infoKey) => {
     const curErr = { ...errors };
     curErr.alert = '';
-    if (type === 'email') {
-      curErr.email = !isEmail(text);
-    } else if (type === 'seekAgeRangeLow') {
+    // if (type === 'email') {
+    //   curErr.email = !isEmail(text);
+    // } else
+    if (type === 'seekAgeRangeLow') {
       const age = Number(text);
       curErr.lowAge = !age || age < 18 || age > info.seekAgeRange[1];
       curErr.highAge = info.seekAgeRange[1] < age;
@@ -130,8 +136,14 @@ const Signup = () => {
       });
       const parseRes = await res.json();
       if (res.ok) {
-        const { properties, elementId } = parseRes.user.records[0]._fields[0];
+        const { properties, elementId, userRecs, userMatches, userMatchChats } =
+          getUserData(parseRes);
+        console.log('userRecs', userRecs);
+        // set state
         user.setUserState(properties, elementId);
+        setRecs(userRecs);
+        setMatches(userMatches);
+        setMatchChats(userMatchChats);
         navigate('/recs');
       } else updateErrors({ ...errors, alert: parseRes.err });
     } else {
@@ -144,9 +156,15 @@ const Signup = () => {
       });
       const parseRes = await res.json();
       if (res.ok) {
-        //const latestRel = parseRes.latestRelationships.records;
-        const { properties, elementId } = parseRes.user.records[0]._fields[0];
+        // extract relevant data from response
+        const { properties, elementId, userRecs, userMatches, userMatchChats } =
+          getUserData(parseRes);
+        console.log('userRecs', userRecs);
+        // set state
         user.setUserState(properties, elementId);
+        setRecs(userRecs);
+        setMatches(userMatches);
+        setMatchChats(userMatchChats);
         navigate('/recs');
       } else updateErrors({ ...errors, alert: parseRes.err });
     }
@@ -166,7 +184,7 @@ const Signup = () => {
             <span className="bg-secondary">Email</span>
             <input
               type="text"
-              placeholder="wingman@email.com"
+              placeholder="lover@wingman.com"
               className={`input input-bordered bg-opacity-20 w-full ${
                 errors.email ? 'input-error' : ''
               }`}
@@ -312,7 +330,7 @@ const Signup = () => {
               }
             />
           </label>
-          <label htmlFor="upload-photo" className="max-w-xs mb-2">
+          <label htmlFor="upload-photo" className="mb-2">
             <input
               style={{ display: 'none' }}
               id="upload-photo"
@@ -336,9 +354,6 @@ const Signup = () => {
                 <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z" />
               </svg>
               Add a Picture
-              {image && (
-                <img src={URL.createObjectURL(image)} className="w-9 rounded" />
-              )}
             </span>
           </label>
           <button
