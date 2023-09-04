@@ -1,25 +1,22 @@
 import 'dotenv/config';
-import express from 'express';
-import http from 'node:http';
+import { AsyncError } from './types/types';
 import { Server } from 'socket.io';
-import cors from 'cors';
-import roomCache from './roomCache.js';
+import http from 'node:http';
+import express, { Application, Request, Response, NextFunction } from 'express';
 // import { cookieParser } from 'cookie-parser';
 
 // import router
-import apiRouter from './routes/api.js';
-import { match } from 'node:assert';
+import apiRouter from './routes/api';
 
 // define server port
-const PORT = process.env.PORT || 3000;
+const PORT: string = process.env.PORT || '3000';
 
 // create express server instance
-const app = express();
+const app: Application = express();
 
 // handle parsing request body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 // app.use(cookieParser());
 
 // handle requests for static files
@@ -29,13 +26,13 @@ app.use(express.static('./../client'));
 app.use('/api', apiRouter);
 
 // catch-all route handler for any requests to an unknown route
-app.use((req, res) =>
+app.use((req: Request, res: Response) =>
   res.status(404).send("This is not the page you're looking for...")
 );
 
 // global error handler
-app.use((err, req, res, next) => {
-  const defaultErr = {
+app.use((err: AsyncError, req: Request, res: Response, next: NextFunction) => {
+  const defaultErr: AsyncError = {
     log: 'Express error handler caught unknown middleware error.',
     status: 500,
     message: {
@@ -74,16 +71,16 @@ io.on('connection', (socket) => {
     const roomName = [userId, matchedUserId].sort((a, b) => a - b);
     let room = roomName[0] + '-' + roomName[1];
     // console.log(roomName);
-    if (roomCache[userId] && roomCache[userId][matchedUserId]) {
-      room = roomCache[userId][matchedUserId];
-    } else {
-      // create a universal room name for both users
-      roomCache[userId] = {};
-      roomCache[userId][matchedUserId] = room;
-      roomCache[matchedUserId] = {};
-      roomCache[matchedUserId][userId] = room;
-      room = room;
-    }
+    // if (roomCache[userId] && roomCache[userId][matchedUserId]) {
+    //   room = roomCache[userId][matchedUserId];
+    // } else {
+    //   // create a universal room name for both users
+    //   roomCache[userId] = {};
+    //   roomCache[userId][matchedUserId] = room;
+    //   roomCache[matchedUserId] = {};
+    //   roomCache[matchedUserId][userId] = room;
+    //   room = room;
+    // }
     // console.log('here is the room cache --->', roomCache);
     // console.log(room);
     socket.join(room);
