@@ -19,4 +19,3 @@ const Match = ({ user }) => {
             React.createElement("button", { className: "btn btn-secondary", onClick: handleChatClick }, "Chat"))));
 };
 export default Match;
-//# sourceMappingURL=Matches.js.map

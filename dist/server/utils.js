@@ -46,4 +46,3 @@ function getAge(date) {
     return age;
 }
 export { addressToPos, dictionary, getAge };
-//# sourceMappingURL=utils.js.map

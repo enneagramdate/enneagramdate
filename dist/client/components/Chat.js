@@ -30,4 +30,3 @@ const Chat = () => {
         React.createElement(NavBar, null)));
 };
 export default Chat;
-//# sourceMappingURL=Chat.js.map

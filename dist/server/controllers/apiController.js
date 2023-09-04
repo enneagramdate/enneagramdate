@@ -393,4 +393,3 @@ apiController.getAllUserInfo = (req, res, next) => __awaiter(void 0, void 0, voi
     }
 });
 export default apiController;
-//# sourceMappingURL=apiController.js.map

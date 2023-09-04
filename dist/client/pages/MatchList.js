@@ -22,4 +22,3 @@ const MatchList = () => {
         React.createElement(NavBar, null)));
 };
 export default MatchList;
-//# sourceMappingURL=MatchList.js.map

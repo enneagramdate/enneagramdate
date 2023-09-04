@@ -6,4 +6,3 @@ const EnneagramBadge = ({ enneagramType, }) => {
         React.createElement("div", { className: `stat-value ${textColor}` }, enneagramType)));
 };
 export default EnneagramBadge;
-//# sourceMappingURL=EnneagramBadge.js.map

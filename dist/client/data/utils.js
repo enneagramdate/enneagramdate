@@ -58,4 +58,3 @@ export const getUserData = (parseRes) => {
     data.userMatchChats = userMatchChats;
     return data;
 };
-//# sourceMappingURL=utils.js.map

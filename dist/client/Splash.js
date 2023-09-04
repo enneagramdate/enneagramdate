@@ -11,4 +11,3 @@ const Splash = () => {
                     React.createElement("button", { className: "btn btn-secondary text-white w-1/3", onClick: () => navigate('/signup') }, "Signup"))))));
 };
 export default Splash;
-//# sourceMappingURL=Splash.js.map

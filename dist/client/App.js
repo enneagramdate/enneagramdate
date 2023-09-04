@@ -38,4 +38,3 @@ const App = () => {
         React.createElement(RouterProvider, { router: router })));
 };
 export default App;
-//# sourceMappingURL=App.js.map

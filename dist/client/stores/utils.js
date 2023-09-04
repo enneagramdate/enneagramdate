@@ -6,4 +6,3 @@ export const createSelectors = (_store) => {
     }
     return store;
 };
-//# sourceMappingURL=utils.js.map

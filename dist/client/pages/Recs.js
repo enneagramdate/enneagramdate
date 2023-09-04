@@ -20,4 +20,3 @@ const Recs = () => {
         React.createElement(NavBar, null)));
 };
 export default Recs;
-//# sourceMappingURL=Recs.js.map

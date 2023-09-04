@@ -188,6 +188,7 @@ const Signup = () => {
               className={`input input-bordered bg-opacity-20 w-full ${
                 errors.email ? 'input-error' : ''
               }`}
+              name="email"
               onChange={(event) => inputHandler(event.target.value, 'email')}
             />
           </label>
@@ -199,6 +200,7 @@ const Signup = () => {
               className="input input-bordered bg-opacity-20 w-full"
               onChange={(event) => inputHandler(event.target.value, 'password')}
               onKeyDown={keyDownHandler}
+              name="password"
             />
           </label>
           <label className="input-group max-w-xs mb-2">
@@ -208,6 +210,7 @@ const Signup = () => {
               placeholder="Steve Harvey"
               className={`input input-bordered bg-opacity-20 w-full`}
               onChange={(event) => inputHandler(event.target.value, 'fullName')}
+              name="name"
             />
           </label>
           <label className="input-group max-w-xs mb-2">
@@ -218,6 +221,7 @@ const Signup = () => {
               onChange={(event) =>
                 inputHandler(event.target.value, 'enneagramType')
               }
+              name="enneagramType"
             >
               <option disabled>1-9</option>
               <option>1</option>
@@ -237,6 +241,7 @@ const Signup = () => {
               type="date"
               className={`input input-bordered bg-opacity-20 w-full`}
               onChange={(event) => inputHandler(event.target.value, 'birthday')}
+              name="birthday"
             />
           </label>
           <label className="input-group max-w-xs mb-2">
@@ -248,6 +253,7 @@ const Signup = () => {
                 errors.zip ? 'input-error' : ''
               }`}
               onChange={(event) => inputHandler(event.target.value, 'location')}
+              name="address"
             />
           </label>
           <label className="input-group max-w-xs mb-2">
@@ -256,6 +262,7 @@ const Signup = () => {
               className="select select-bordered w-full max-w-xs bg-opacity-20"
               defaultValue="Gender"
               onChange={(event) => inputHandler(event.target.value, 'gender')}
+              name="gender"
             >
               <option disabled>Gender</option>
               <option>Female</option>
@@ -271,6 +278,7 @@ const Signup = () => {
               onChange={(event) =>
                 inputHandler(event.target.value, 'seekGender')
               }
+              name="seeking-gender"
             >
               <option disabled>Gender</option>
               <option>Female</option>
@@ -286,6 +294,7 @@ const Signup = () => {
               onChange={(event) =>
                 inputHandler(event.target.value, 'seekRelationship')
               }
+              name="relationship-type"
             >
               <option disabled>Relationship Type</option>
               <option>Serious</option>
@@ -303,6 +312,7 @@ const Signup = () => {
               onChange={(event) =>
                 inputHandler(event.target.value, 'seekRadius')
               }
+              name="radius"
             />
             <span className="bg-secondary w-1/4">Miles</span>
           </label>
@@ -317,6 +327,7 @@ const Signup = () => {
               onChange={(event) =>
                 inputHandler(event.target.value, 'seekAgeRangeLow')
               }
+              name="age-range-low"
             />
             <span className="bg-secondary">and</span>
             <input
@@ -328,6 +339,7 @@ const Signup = () => {
               onChange={(event) =>
                 inputHandler(event.target.value, 'seekAgeRangeHigh')
               }
+              name="age-range-high"
             />
           </label>
           <label htmlFor="upload-photo" className="mb-2">

@@ -9,4 +9,3 @@ export const socket = io(URL, {
 const root = createRoot(document.getElementById('root'));
 root.render(React.createElement(React.StrictMode, null,
     React.createElement(App, null)));
-//# sourceMappingURL=index.js.map

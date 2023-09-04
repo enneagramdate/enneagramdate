@@ -39,4 +39,3 @@ export default {
     },
     plugins: [require('daisyui')],
 };
-//# sourceMappingURL=tailwind.config.js.map

@@ -11,4 +11,3 @@ const NavBar = () => {
             React.createElement("span", { className: "btm-nav-label" }, "Matches"))));
 };
 export default NavBar;
-//# sourceMappingURL=Navbar.js.map

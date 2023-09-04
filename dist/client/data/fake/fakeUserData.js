@@ -13,4 +13,3 @@ for (let i = 1; i < 10; i += 1) {
     });
 }
 export default usersArr;
-//# sourceMappingURL=fakeUserData.js.map
