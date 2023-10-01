@@ -13,10 +13,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: '18'
+
       # - name: Cypress run
       #   uses: cypress-io/github-action@v6
       #   with:
@@ -24,8 +25,8 @@ jobs:
       #     start: npm start
       #     browser: chrome
       # - name: Compose up test app and database containers
+
       - name: Run E2E tests in Cypress
         uses: cypress-io/github-action@v6
         with:
-          browser: chrome
-        run: docker-compose -f docker-compose-test.yml up --abort-on-container-exit & npm run cy:run
+          command: docker-compose -f docker-compose-test.yml up --abort-on-container-exit
