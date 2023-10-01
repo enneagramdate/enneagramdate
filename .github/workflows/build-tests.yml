@@ -8,7 +8,7 @@ jobs:
   e2e-testing:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node18.12.0-chrome106-ff106
+      image: cypress/browsers:latest
       options: --user 1001
     steps:
       - name: Checkout repository
@@ -17,17 +17,18 @@ jobs:
       #   uses: actions/setup-node@v3
       #   with:
       #     node-version: '18'
-
       # - name: Cypress run
       #   uses: cypress-io/github-action@v6
       #   with:
       #     build: npm run build
       #     start: npm start
       #     browser: chrome
-      # - name: Compose up test app and database containers
-
+      - name: Compose up test app and database containers
+        run: docker-compose -f docker-compose-test.yml up --abort-on-container-exit
       - name: Run E2E tests in Cypress
         uses: cypress-io/github-action@v6
         with:
-          command: docker-compose -f docker-compose-test.yml up --abort-on-container-exit
-          working-directory: usr/src/app
+          spec: cypress/e2e/spec.cy.ts
+        # with:
+        #   command: docker-compose -f docker-compose-test.yml up --abort-on-container-exit
+        #   working-directory: usr/src/app
