@@ -7,7 +7,7 @@ services:
     ports:
       - '9999:9999'
     volumes: [./:/usr/src/app, node_modules:/usr/src/app/node_modules]
-    command: npm run dev & npm run cy:run
+    command: npm run dev & xvfb-run npm run cy:run
     depends_on:
       - neo4j-db-test
 
