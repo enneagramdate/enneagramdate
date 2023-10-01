@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon ./dist/server/server.js & webpack-dev-server --open --hot",
     "build": "webpack",
+    "start": "docker-compose -f docker-compose-test.yml up --abort-on-container-exit",
     "backend": "nodemon ./dist/server/server.js",
     "cy:open": "cypress open",
     "cy:run": "cypress run"
