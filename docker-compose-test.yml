@@ -1,19 +1,19 @@
 version: '3'
 
 services:
-  wingman:
+  wingman-test:
     image: upasana90daniel98/wingman
-    container_name: wingman
+    container_name: wingman-test
     ports:
       - '9999:9999'
     volumes: [./:/usr/src/app, node_modules:/usr/src/app/node_modules]
-    command: npm run dev
+    command: npm run dev & npm run cy:run
     depends_on:
-      - neo4j-db
+      - neo4j-db-test
 
-  neo4j-db:
+  neo4j-db-test:
     image: neo4j:latest
-    container_name: neo4j
+    container_name: neo4j-db-test
     ports:
       - '7474:7474'
       - '7687:7687'
