@@ -7,9 +7,9 @@ on:
 jobs:
   e2e-testing:
     runs-on: ubuntu-latest
-    container:
-      image: cypress/browsers:latest
-      options: --user 1001
+    # container:
+    #   image: cypress/browsers:latest
+    #   options: --user 1001
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
