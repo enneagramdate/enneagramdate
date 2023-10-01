@@ -6,10 +6,20 @@ on:
 
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node18.12.0-chrome106-ff106
       options: --user 1001
+    # container:
+    #   image: neo4j:latest
+    services:
+      neo4j:
+        image: neo4j:latest
+        ports:
+          - '7474:7474'
+          - '7687:7687'
+        environment: [NEO4J_AUTH=neo4j/secretgraph]
+        volumes: [$HOME/neo4j/data:/data]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,34 +27,5 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           build: npm run build
-          # start: npm run dev
-          start: npm start
+          start: npm run dev
           browser: chrome
-
-  # e2e-testing:
-  #   runs-on: ubuntu-latest
-  #   # container:
-  #   #   image: cypress/browsers:latest
-  #   #   options: --user 1001
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
-  #     # - name: Set up Node.js
-  #     #   uses: actions/setup-node@v3
-  #     #   with:
-  #     #     node-version: '18'
-  #     # - name: Cypress run
-  #     #   uses: cypress-io/github-action@v6
-  #     #   with:
-  #     #     build: npm run build
-  #     #     start: npm start
-  #     #     browser: chrome
-  #     - name: Compose up test app and database containers
-  #       run: docker-compose -f docker-compose-test.yml up --abort-on-container-exit
-  #     - name: Run E2E tests in Cypress
-  #       uses: cypress-io/github-action@v6
-  #       with:
-  #         spec: cypress/e2e/spec.cy.ts
-  #       # with:
-  #       #   command: docker-compose -f docker-compose-test.yml up --abort-on-container-exit
-  #       #   working-directory: usr/src/app
