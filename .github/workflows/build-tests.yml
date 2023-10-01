@@ -17,7 +17,8 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           build: npm run build
-          start: npm run dev
+          # start: npm run dev
+          start: docker-compose -f docker-compose-test.yml up --abort-on-container-exit
           browser: chrome
 
   # e2e-testing:
