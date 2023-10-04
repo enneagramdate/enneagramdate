@@ -21,7 +21,7 @@
       "*": ["node_modules/*", "src/types/*"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. 
       This specific array tells the TypeScript compiler that in addition to looking in node_modules/@types for every import (*) also look in our own .d.ts file location <baseUrl> + src/types/*. */,
-    "types": ["node"],
+    "types": ["node", "cypress", "cypress-file-upload"],
     "useUnknownInCatchVariables": false
   },
   "include": ["**/*.ts", "**/*.tsx"],
