@@ -1,4 +1,21 @@
 /// <reference types="cypress" />
+
+import 'cypress-file-upload';
+// @ts-ignore
+Cypress.Commands.add('upload_file', (fileName, fileType = ' ', selector) => {
+  cy.get(selector).then((subject) => {
+    // @ts-ignore
+    cy.fixture(fileName, 'base64').then((content) => {
+      const el = subject[0];
+      // @ts-ignore
+      const testFile = new File([content], fileName, { type: fileType });
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(testFile);
+      el.files = dataTransfer.files;
+    });
+  });
+});
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite

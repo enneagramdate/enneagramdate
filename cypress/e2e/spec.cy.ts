@@ -21,7 +21,20 @@ describe('App', () => {
       cy.get('input[name=radius]').type('2000');
       cy.get('input[name=age-range-low]').type('18');
       cy.get('input[name=age-range-high]').type('118');
-      cy.get('span[aria-label=add]').click().wait(10000);
+      // 10 sec delay to manually upload image file
+      // cy.get('span[aria-label=add]').click().wait(10000);
+      // cy.get('input[type="file"]').as('fileInput');
+      // cy.fixture('test.png').then((fileContent) => {
+      //   cy.get('@fileInput').attachFile({
+      //     fileContent: fileContent.toString(),
+      //     fileName: 'test.png',
+      //     mimeType: 'image/png',
+      //   });
+      // });
+      // @ts-ignore
+      cy.upload_file('test.png', 'image/png', 'input[type="file"]');
+      cy.contains('test.png');
+
       cy.get('button').click();
     });
     cy.url().should('eq', 'http://localhost:9999/recs');
@@ -40,6 +53,7 @@ describe('App', () => {
       cy.get('input[name=radius]').type('2000');
       cy.get('input[name=age-range-low]').type('18');
       cy.get('input[name=age-range-high]').type('118');
+      // 10 sec delay to manually upload image file
       cy.get('span[aria-label=add]').click().wait(10000);
       cy.get('button').click();
     });
