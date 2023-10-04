@@ -4,14 +4,15 @@ on:
   pull_request:
     branches: [main, dev]
 
+# env:
+#   PORT: 8000
+
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node18.12.0-chrome106-ff106
       options: --user 1001
-    # container:
-    #   image: neo4j:latest
     services:
       neo4j:
         image: neo4j:latest
