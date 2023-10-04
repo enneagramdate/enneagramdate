@@ -4,8 +4,8 @@ on:
   pull_request:
     branches: [main, dev]
 
-# env:
-#   PORT: 8000
+env:
+  PORT: 8000
 
 jobs:
   cypress-run:
