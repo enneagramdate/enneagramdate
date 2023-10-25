@@ -1,18 +1,25 @@
+# References:
+# https://docs.github.com/en/actions/learn-github-actions/variables
+# https://www.npmjs.com/package/cypress-file-upload, https://www.browserstack.com/guide/cypress-test-file-upload
+# https://hub.docker.com/_/neo4j
+
 name: build-tests
 
 on:
   pull_request:
     branches: [main, dev]
+  workflow_dispatch:
 
 env:
   PORT: 8000
-  NEO4J_AUTH: none
+  # NEO4J_AUTH: none
 
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node18.12.0-chrome106-ff106
+      # image: cypress/browsers:node18.12.0-chrome106-ff106
+      image: cypress/browsers:node18.12.0-chrome107
       options: --user 1001
     services:
       neo4j:
@@ -20,6 +27,16 @@ jobs:
         ports:
           - '7474:7474'
           - '7687:7687'
+        env:
+          NEO4J_dbms_connector_bolt_advertised__address: localhost:7687
+          NEO4J_dbms_connector_bolt_enabled: 'true'
+          NEO4J_dbms_security_auth__enabled: 'false'
+        options: >-
+          --health-cmd "cypher-shell 'match (n) return count(n)'"
+          --health-timeout 10s
+          --health-retries 20
+          --health-interval 10s
+          --health-start-period 30s
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,4 +45,9 @@ jobs:
         with:
           build: npm run build
           start: npm run dev
+          wait-on: 'http://localhost:9999'
+          record: true
           browser: chrome
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,7 +2,7 @@
 
 import 'cypress-file-upload';
 // @ts-ignore
-Cypress.Commands.add('upload_file', (fileName, fileType = ' ', selector) => {
+Cypress.Commands.add('upload_file', (fileName, fileType = '', selector) => {
   cy.get(selector).then((subject) => {
     // @ts-ignore
     cy.fixture(fileName, 'base64').then((content) => {
