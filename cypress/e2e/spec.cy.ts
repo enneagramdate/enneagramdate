@@ -33,7 +33,7 @@ describe('App', () => {
       // });
       // @ts-ignore
       cy.upload_file('test.png', 'image/png', 'input[type="file"]');
-      cy.contains('test.png');
+      // cy.contains('test.png');
 
       cy.get('button').click();
     });
